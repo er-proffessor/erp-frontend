@@ -1,31 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function CounterList() {
   const [counters, setCounters] = useState([]);
-  const navigate = useNavigate();
-  const {branchId} = useParams();
+  const { branchId } = useParams();
 
-  const fetchCounters = async () => {
-    const token = localStorage.getItem("token");
-    console.log(branchId);
+  const fetchCounters = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-    const res = await axios.get(
-      `http://localhost:5000/api/branches/branch/${branchId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/branches/branch/${branchId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    setCounters(res.data);
-  };
+      setCounters(res.data);
+    } catch (error) {
+      console.error("Fetch counters error:", error);
+    }
+  }, [branchId]);
 
   useEffect(() => {
-    fetchCounters();
-  }, [branchId]);
+    if (branchId) {
+      fetchCounters();
+    }
+  }, [branchId, fetchCounters]);
 
   return (
     <div>
@@ -35,7 +39,6 @@ function CounterList() {
         <thead>
           <tr>
             <th>Name</th>
-            
             <th>Status</th>
           </tr>
         </thead>
@@ -43,7 +46,6 @@ function CounterList() {
           {counters.map((counter) => (
             <tr key={counter._id}>
               <td>{counter.name}</td>
-              
               <td>{counter.status ? "Active" : "Inactive"}</td>
             </tr>
           ))}

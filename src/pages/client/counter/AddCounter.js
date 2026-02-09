@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -11,16 +11,15 @@ function AddCounter() {
     schoolId: "",
   });
 
-  const {branchId} = useParams();
-  // console.log(branchId);
+  const { branchId } = useParams();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-  const fetchSchools = async () => {
+  const fetchSchools = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        `http://localhost:5000/api/branches/${branchId}/schools`,
+        `${process.env.REACT_APP_API_URL}/api/branches/${branchId}/schools`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -28,39 +27,38 @@ function AddCounter() {
         }
       );
 
-      // console.log(res.data);
-
       setSchools(res.data);
-
-      console.log(schools);
-      
-
     } catch (err) {
       console.error("Fetch schools error:", err);
     }
-  };
+  }, [branchId]);
 
-  fetchSchools();
-}, [branchId]);
-
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (branchId) {
+      fetchSchools();
+    }
+  }, [branchId, fetchSchools]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    await axios.post(
-      `http://localhost:5000/api/counters/addCounter`,
-      form,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/counters/addCounter`,
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    navigate(`/branches/${branchId}/counters`);
+      navigate(`/branches/${branchId}/counters`);
+    } catch (error) {
+      console.error("Add counter error:", error);
+    }
   };
 
   return (
@@ -76,23 +74,21 @@ function AddCounter() {
             setForm({ ...form, name: e.target.value })
           }
         />
-       
+
         <select
           className="input mb-3"
-          placeholder="Counter Code"
           value={form.schoolId}
           onChange={(e) =>
             setForm({ ...form, schoolId: e.target.value })
           }
-          >
-            <option value="">Select School</option>
-            {schools.map((school) => (
-              <option key={school._id} value={school._id}>
+        >
+          <option value="">Select School</option>
+          {schools.map((school) => (
+            <option key={school._id} value={school._id}>
               {school.schoolName}
-              </option>
-            ))}
-            </select>
-        
+            </option>
+          ))}
+        </select>
 
         <button className="btn-primary">Save</button>
       </form>
