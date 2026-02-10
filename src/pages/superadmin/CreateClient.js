@@ -1,6 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API from "../../config/api";
 
 function CreateClient(){
 
@@ -25,8 +26,8 @@ function CreateClient(){
         try{
             const token = localStorage.getItem("token");
 
-            await axios.post(
-                                "http://localhost:5000/api/branches/register", 
+            await API.post(
+                                "/api/branches/register", 
                                 formData,
                                 { 
                                     headers: {

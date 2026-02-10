@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+
 import { useNavigate, useParams } from "react-router-dom";
+import API from "../../../config/api";
 
 function AddCounter() {
   const [schools, setSchools] = useState([]);
@@ -18,8 +19,8 @@ function AddCounter() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/branches/${branchId}/schools`,
+      const res = await API.get(
+        `/api/branches/${branchId}/schools`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -45,8 +46,8 @@ function AddCounter() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/counters/addCounter`,
+      await API.post(
+        `/api/counters/addCounter`,
         form,
         {
           headers: {

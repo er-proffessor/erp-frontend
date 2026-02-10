@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+// import axios from "axios";
+import API from "../../config/api";
 
 function Dashboard() {
   const { branchId } = useParams();
@@ -10,8 +11,8 @@ function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/branches/${branchId}`,
+      const response = await API.get(
+        `/api/branches/${branchId}/branch`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -34,7 +35,9 @@ function Dashboard() {
   return (
     <div className="dashboard-page">
       <div className="mb-4">
-        <h5 className="fw-bold">Dashboard</h5>
+        <h5 className="fw-bold">{branch.branchName
+            ? `${branch.branchName}`
+            : "Dashboard"}</h5>
         <small className="text-muted">
           {branch.branchName
             ? `${branch.branchName} / Dashboard`

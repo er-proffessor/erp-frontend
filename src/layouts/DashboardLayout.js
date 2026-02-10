@@ -2,7 +2,8 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { Outlet, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
+import API from "../config/api";
 
 function DashboardLayout() {
   const [schools, setSchools] = useState([]);
@@ -11,11 +12,8 @@ function DashboardLayout() {
   const {branchId} = useParams();
   const [schoolsLoading, setSchoolsLoading] = useState(true);
   const [booksLoading, setBooksLoading] = useState(true);
-  
 
-    // const addSchool = (school) => {
-    //     setSchools([...schools, school]);
-    // };
+    // Get School List
 
   useEffect(() => {
   if (!branchId) return;
@@ -26,8 +24,8 @@ function DashboardLayout() {
 
       const token = localStorage.getItem("token");
 
-      const resp = await axios.get(
-        `http://localhost:5000/api/branches/${branchId}/schools`,
+      const resp = await API.get(
+        `/api/branches/${branchId}/schools`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -35,7 +33,7 @@ function DashboardLayout() {
         }
       );
 
-      setSchools(resp.data);
+      setSchools(resp.data.data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -54,7 +52,7 @@ function DashboardLayout() {
 
       console.log(schoolData);
 
-      const res = await axios.post("http://localhost:5000/api/schools/addSchool", schoolData,
+      const res = await API.post("/api/schools/addSchool", schoolData,
         {
           headers:{
             Authorization: `Bearer ${token}`,
@@ -74,32 +72,34 @@ function DashboardLayout() {
 
     const [books, setBooks] = useState([]);
 
-    useEffect(()=>{
-      if (!branchId) return;
+    useEffect(() => {
+  if (!branchId) return;
+
+  const fetchBooks = async () => {
+    try {
+      setBooksLoading(true);
 
       const token = localStorage.getItem("token");
 
-    axios.get(`http://localhost:5000/api/branches/${branchId}/books`, 
-      {
-         headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-      }
+      const resp = await API.get(
+        `/api/branches/${branchId}/books`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    )
-    .then((resp)=>{
       setBooks(resp.data.data);
-
-      console.log(resp.data.data);
-
-      setBooksLoading(false);
-    })
-    .catch((error)=>{
+    } catch (error) {
       console.error(error);
+    } finally {
       setBooksLoading(false);
-    });
-  },[branchId]);
+    }
+  };
 
+  fetchBooks();
+}, [branchId]);
   
   // Add New Book
 
@@ -110,7 +110,7 @@ function DashboardLayout() {
 
         console.log(newBooks);
 
-      const res = await axios.post(`http://localhost:5000/api/books/addBooks`,
+      const res = await API.post(`/api/books/addBooks`,
         newBooks,
 
         {

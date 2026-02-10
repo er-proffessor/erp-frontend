@@ -13,7 +13,7 @@ function BooksList() {
 
       <div className="card-header d-flex justify-content-between">
         <h5>Books List</h5>
-        <NavLink to={`/api/branches/${branchId}/books/add`} className="btn btn-primary btn-sm">
+        <NavLink to={`/branches/${branchId}/books/add`} className="btn btn-primary btn-sm">
           + Add Book
         </NavLink>
       </div>

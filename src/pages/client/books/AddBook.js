@@ -30,7 +30,7 @@ function AddBook() {
             quantity: Number(quantity)
         });
 
-        navigate(`/api/branches/${branchId}/books`);
+        navigate(`/branches/${branchId}/books`);
     };
 
     return (

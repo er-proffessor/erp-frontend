@@ -1,12 +1,12 @@
 
-import Header from "../components/Header";
+import AdminHeader from "../components/AdminHeader";
 
 function AdminDashboardLayout({ children }) {
   return (
     <div className="d-flex">
 
       <div className="flex-grow-1">
-        <Header />
+        <AdminHeader />
 
         <div className="container-fluid mt-3">
           {children}

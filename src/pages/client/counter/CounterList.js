@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+
 import { useParams } from "react-router-dom";
+import API from "../../../config/api";
 
 function CounterList() {
   const [counters, setCounters] = useState([]);
@@ -10,8 +11,8 @@ function CounterList() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/branches/branch/${branchId}`,
+      const res = await API.get(
+        `/api/branches/branch/${branchId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

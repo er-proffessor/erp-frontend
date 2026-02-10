@@ -1,21 +1,13 @@
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import API from "../../config/api";
 
 function BranchList() {
 
   const navigate = useNavigate();
 
-  const [branches, setBranches] = useState([
-    // {
-    //   id: 1,
-    //   branch: "Satkar Hostel Group",
-    //   mobile: "9782780925",
-    //   email: "deendayal.kumawat100@gmail.com",
-    //   password: "12345",
-    //   address: "Jaipur Rajasthan"
-    // }
-  ]);
+  const [branches, setBranches] = useState([]);
 
   useEffect( () => {
 
@@ -27,8 +19,8 @@ function BranchList() {
     try{
       const token = localStorage.getItem("token");
 
-      const response = await axios.get(
-                "http://localhost:5000/api/branches/branchlist", 
+      const response = await API.get(
+                "/api/branches/branchlist", 
                 {
                  headers: {
                             Authorization: `Bearer ${token}`,
@@ -46,7 +38,7 @@ function BranchList() {
 
 
     const goToClientDashboard = (branchId) => {
-        navigate(`/api/branches/${branchId}`);
+        navigate(`/branches/${branchId}`);
     };
 
   return (

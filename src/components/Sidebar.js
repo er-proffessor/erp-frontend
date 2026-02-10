@@ -1,5 +1,6 @@
 import { NavLink, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import API from "../config/api";
 
 function Sidebar() {
   const { branchId } = useParams();
@@ -35,11 +36,43 @@ const toggleCounter = () => {
   setOrders(false);
 };
 
+
+  const [branch, setBranch] = useState({});
+
+  const fetchBranchDetails = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await API.get(
+        `/api/branches/${branchId}/branch`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setBranch(response.data.data);
+    } catch (error) {
+      console.error("Branch fetch error:", error);
+    }
+  }, [branchId]);
+
+  useEffect(() => {
+    if (branchId) {
+      fetchBranchDetails();
+    }
+  }, [branchId, fetchBranchDetails]);
+
+
+
   return (
     <div className="bg-white boder-end text-dark vh-100 p-3" style={{ width: "260px" }}>
-      <h5 className="mb-4 fw-bold">General Publication</h5>
+      <h5 className="mb-4 fw-bold">{branch.branchName
+            ? `${branch.branchName}`
+            : "Dashboard"}</h5>
       <div className="text-muted mb-4">
-        <h6>Welcome General Publication Group</h6>
+        <h6>Dashboar Menu</h6>
       </div>
       <ul className="nav flex-column">
 
