@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import API from "../config/api";
 
 function DashboardLayout() {
-  const [schools, setSchools] = useState([]);
+  
   
 
   const {branchId} = useParams();
@@ -15,6 +15,8 @@ function DashboardLayout() {
 
     // Get School List
 
+    const [schools, setSchools] = useState([]);
+    
   useEffect(() => {
   if (!branchId) return;
 

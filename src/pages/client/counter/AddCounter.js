@@ -8,8 +8,9 @@ function AddCounter() {
 
   const [form, setForm] = useState({
     name: "",
-    code: "",
     schoolId: "",
+    schoolName: "",
+    mobileNo: ""
   });
 
   const { branchId } = useParams();
@@ -28,7 +29,7 @@ function AddCounter() {
         }
       );
 
-      setSchools(res.data);
+      setSchools(res.data?.data || []);
     } catch (err) {
       console.error("Fetch schools error:", err);
     }
@@ -63,36 +64,60 @@ function AddCounter() {
   };
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-4">Add Counter</h2>
-
-      <form onSubmit={submitHandler} className="max-w-md">
-        <input
-          className="input mb-3"
+    <div className="card">
+            <div className="card-header fw-bold">Add Counter</div>
+            <div className="card-body">
+              <form onSubmit={submitHandler} className="max-w-md">
+              <div className="mb-3">
+                        <label className="form-label">Counter Name:</label>
+              <input
+          className="form-control"
           placeholder="Counter Name"
           value={form.name}
           onChange={(e) =>
             setForm({ ...form, name: e.target.value })
           }
-        />
+         required />
+        </div>
 
-        <select
-          className="input mb-3"
-          value={form.schoolId}
+        <div className="mb-3">
+                        <label className="form-label">Mobile No. :</label>
+              <input
+          className="form-control"
+          placeholder="Counter Mobile No."
+          value={form.mobileNo}
           onChange={(e) =>
-            setForm({ ...form, schoolId: e.target.value })
+            setForm({ ...form, mobileNo: e.target.value })
           }
-        >
+         required />
+        </div>
+
+          <div className="mb-3">
+                        <label className="form-label">School Name:</label>
+        <select
+          className="form-control"
+          value={form.schoolId}
+          onChange={(e) => {
+            const selectedSchool = schools.find((school) => school._id === e.target.value);
+
+            setForm({ ...form, 
+              schoolId: e.target.value,
+              schoolName: selectedSchool?.schoolName || ""
+            });
+          }}
+         >
           <option value="">Select School</option>
-          {schools.map((school) => (
+          {schools?.map((school) => (
             <option key={school._id} value={school._id}>
               {school.schoolName}
             </option>
           ))}
         </select>
+        </div>
 
         <button className="btn-primary">Save</button>
       </form>
+      </div>
     </div>
   );
 }

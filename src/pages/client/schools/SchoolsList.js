@@ -4,7 +4,7 @@ import { useOutletContext } from "react-router-dom";
 
 function SchoolsList() {
   const { branchId } = useParams();
-    const {schools} = useOutletContext();
+    const { schools = [] } = useOutletContext() || {};
 
     console.log(schools);
 
@@ -14,8 +14,7 @@ function SchoolsList() {
         <span className="fw-bold">Schools List</span>
         <Link
           to={`/branches/${branchId}/schools/add`}
-          className="btn btn-sm btn-primary"
-        >
+          className="btn btn-sm btn-primary">
           + Add School
         </Link>
       </div>
@@ -56,7 +55,7 @@ function SchoolsList() {
                         </span>
                       ))}
                     </td> */}
-                    <td>{school.schoolClasses.join(", ")}</td>
+                    <td>{school.schoolClasses?.join(", ")}</td>
                     <td>
                       <button className="btn btn-sm btn-outline-primary me-2">
                         ✏️

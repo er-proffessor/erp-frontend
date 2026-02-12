@@ -12,7 +12,7 @@ function CounterList() {
       const token = localStorage.getItem("token");
 
       const res = await API.get(
-        `/api/branches/branch/${branchId}`,
+        `/api/branches/${branchId}/counters`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -20,9 +20,12 @@ function CounterList() {
         }
       );
 
-      setCounters(res.data);
+      setCounters(res.data || []);
+
     } catch (error) {
       console.error("Fetch counters error:", error);
+      setCounters([]);
+
     }
   }, [branchId]);
 
@@ -33,27 +36,44 @@ function CounterList() {
   }, [branchId, fetchCounters]);
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-4">Counter List</h2>
+     <div className="container-fluid">
+      <h4 className="mb-3">Counter List</h4>
 
-      <table className="table">
+      <table className="table table-bordered table-hover">
         <thead>
           <tr>
-            <th>Name</th>
+            <th>#</th>
+            <th>Counter Name</th>
+            <th>Mobile Number</th>
+            <th>School Name</th>
+            <th>Total Books Assigned</th>
             <th>Status</th>
           </tr>
         </thead>
         <tbody>
-          {counters.map((counter) => (
-            <tr key={counter._id}>
-              <td>{counter.name}</td>
-              <td>{counter.status ? "Active" : "Inactive"}</td>
+          {counters.length === 0 ? (
+            <tr>
+              <td colSpan="6" className="text-center">
+                No counters found
+              </td>
             </tr>
-          ))}
+          ) : (
+            counters.map((counter, index) => (
+              <tr key={counter._id}>
+                <td>{index + 1}</td>
+                <td>{counter.name}</td>
+                <td>{counter.mobileNo}</td>
+                <td>{counter.schoolId?.schoolName}</td>
+                <td>{counter.stockCount || 0}</td>
+                <td>{counter.status}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
   );
+ 
 }
 
 export default CounterList;
