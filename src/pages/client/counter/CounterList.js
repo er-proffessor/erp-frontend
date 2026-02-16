@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import API from "../../../config/api";
 
 function CounterList() {
   const [counters, setCounters] = useState([]);
   const { branchId } = useParams();
+  const navigate = useNavigate();
 
   const fetchCounters = useCallback(async () => {
     try {
@@ -48,6 +49,8 @@ function CounterList() {
             <th>School Name</th>
             <th>Total Books Assigned</th>
             <th>Status</th>
+            <th>Counter Dashboard</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -64,8 +67,20 @@ function CounterList() {
                 <td>{counter.name}</td>
                 <td>{counter.mobileNo}</td>
                 <td>{counter.schoolId?.schoolName}</td>
-                <td>{counter.stockCount || 0}</td>
+                <td>{counter.totalBooksAssigned || 0}</td>
                 <td>{counter.status}</td>
+              <td>
+                <button
+                  className="btn btn-sm btn-info"
+                  onClick={() => {
+                  localStorage.setItem("counterId", counter._id);
+                  navigate(`/branches/${branchId}/counter-dashboard`);
+                }}
+                >
+                 Open
+                </button>
+              </td>
+              
               </tr>
             ))
           )}

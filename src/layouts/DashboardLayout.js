@@ -1,24 +1,27 @@
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { Outlet, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 // import axios from "axios";
 import API from "../config/api";
+import CounterSidebar from "./CounterSidebar";
 
 function DashboardLayout() {
   
-  
+  const role = localStorage.getItem("role");
 
   const {branchId} = useParams();
-  const [schoolsLoading, setSchoolsLoading] = useState(true);
-  const [booksLoading, setBooksLoading] = useState(true);
+  const [schoolsLoading, setSchoolsLoading] = useState(role !== "COUNTER");
+  const [booksLoading, setBooksLoading] = useState(role !== "COUNTER");
 
-    // Get School List
+
+
+  // Get School List
 
     const [schools, setSchools] = useState([]);
     
   useEffect(() => {
-  if (!branchId) return;
+  if (!branchId || role === "COUNTER") return;
 
   const fetchSchools = async () => {
     try {
@@ -44,11 +47,12 @@ function DashboardLayout() {
   };
 
   fetchSchools();
-}, [branchId]);
+}, [branchId, role]);
 
   // Add New School 
 
   const addSchool = async (schoolData) => {
+    if(role === "COUNTER") return;
     try{
       const token = localStorage.getItem("token");
 
@@ -74,10 +78,10 @@ function DashboardLayout() {
 
     const [books, setBooks] = useState([]);
 
-    useEffect(() => {
-  if (!branchId) return;
 
-  const fetchBooks = async () => {
+  const fetchBooks = useCallback(async () => {
+    if(role === "COUNTER") return;
+
     try {
       setBooksLoading(true);
 
@@ -98,14 +102,18 @@ function DashboardLayout() {
     } finally {
       setBooksLoading(false);
     }
-  };
+  }, [branchId, role]);
 
-  fetchBooks();
-}, [branchId]);
+    useEffect(() => {
+        if (!branchId || role === "COUNTER") return;
+        
+        fetchBooks();
+}, [fetchBooks, branchId, role]);
   
   // Add New Book
 
   const addBooks = async (newBooks) => {
+     if(role === "COUNTER") return;
     try{
 
       const token = localStorage.getItem("token");
@@ -138,7 +146,11 @@ function DashboardLayout() {
   return (
     <>
     <div className="d-flex">
-      <Sidebar />
+      {/* <Sidebar /> */}
+
+      {/* {role !== "COUNTER" && <Sidebar />} */}
+
+      {role === "COUNTER" ? <CounterSidebar /> : <Sidebar />}
 
       <div className="flex-grow-1">
         <Header />
@@ -148,7 +160,7 @@ function DashboardLayout() {
         :
          (
          <div className="container-fluid px-4 py-3 bg-light" style={{ minHeight: "100vh" }}>
-            <Outlet context={{schools, addSchool, books, addBooks}} />         
+            <Outlet context={{schools, addSchool, books, addBooks, fetchBooks}} />         
           </div>
         )}
       </div>

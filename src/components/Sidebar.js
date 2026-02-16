@@ -4,21 +4,16 @@ import API from "../config/api";
 
 function Sidebar() {
   const { branchId } = useParams();
+  // const counterId = localStorage.getItem("counterId");
+
   const [school, setSchool] = useState(false);
   const [books, setBooks] = useState(false);
-  const [orders, setOrders] = useState(false);
+  // const [stockAssign, setStockAssign] = useState(false);
   const [counter, setCounter] = useState(false);
 
   const toggleSchool = () => {
   setSchool(!school);
-  setOrders(false);
-  setBooks(false);
-  setCounter(false);
-};
-
-const toggleOrders = () => {
-  setOrders(!orders);
-  setSchool(false);
+  // setOrders(false);
   setBooks(false);
   setCounter(false);
 };
@@ -26,14 +21,14 @@ const toggleOrders = () => {
 const toggleBooks = () => {
   setBooks(!books);
   setSchool(false);
-  setOrders(false);
+  // setOrders(false);
   setCounter(false);
 };
 const toggleCounter = () => {
   setCounter(!counter);
   setBooks(false);
   setSchool(false);
-  setOrders(false);
+  // setOrders(false);
 };
 
 
@@ -153,7 +148,7 @@ const toggleCounter = () => {
         </li>
 
 
-        {/* Orders (WITH DROPDOWN) */}
+        {/* Orders (WITH DROPDOWN)
         <li className="nav-item mb-2">
           <div
             className="nav-link text-black"
@@ -167,7 +162,7 @@ const toggleCounter = () => {
             <ul className="nav flex-column ms-3">
               <li className="nav-item">
                 <NavLink
-                  to={`/branches/${branchId}`}
+                  to={counterId ? `/counter/${counterId}/orders` : "#"}
                   className="nav-link text-black"
                 >
                   Orders List
@@ -176,7 +171,7 @@ const toggleCounter = () => {
 
               <li className="nav-item">
                 <NavLink
-                  to={`/branches/${branchId}`}
+                  to={counterId ? `/counter/${counterId}/sell` : "#"}
                   className="nav-link text-black"
                 >
                   Add Orders
@@ -184,7 +179,7 @@ const toggleCounter = () => {
               </li>
             </ul>
           )}
-        </li>
+        </li> */}
 
           
 
@@ -215,6 +210,15 @@ const toggleCounter = () => {
                   className="nav-link text-black"
                 >
                   Add Counter
+                </NavLink>
+              </li>
+
+              <li className="nav-item">
+                <NavLink
+                  to={`/branches/${branchId}/counter-stock/assign`}
+                  className="nav-link text-black"
+                >
+                  Assign Books to Counter
                 </NavLink>
               </li>
             </ul>

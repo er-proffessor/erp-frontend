@@ -6,18 +6,21 @@ import API from "../config/api";
 function Header() {
 
   
+  
   const logout = () => {
-    localStorage.removeItem("isLoggedIn");
-    window.location.href = "/";
-
-    // localStorage.clear();
-    // navigate("/");
-
-  };
+  localStorage.removeItem("isLoggedIn");
+  localStorage.removeItem("counterId");
+  localStorage.removeItem("branchId");
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  window.location.href = "/";
+};
 
   const { branchId } = useParams();
   const [branch, setBranch] = useState({});
-
+  const role = localStorage.getItem("role");
+  
+  
   const fetchBranchDetails = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -38,18 +41,23 @@ function Header() {
   }, [branchId]);
 
   useEffect(() => {
-    if (branchId) {
-      fetchBranchDetails();
-    }
-  }, [branchId, fetchBranchDetails]);
+  if (!branchId || role === "COUNTER") return;
+
+  fetchBranchDetails();
+}, [branchId, fetchBranchDetails, role]);
+
 
 
   return (
     
       <nav className="navbar navbar-light bg-white border-bottom px-4">
-      <h4>  <span className="fw-bold">{branch.branchName
-            ? `Welcome ${branch.branchName} Groups`
-            : "Dashboard"}</span></h4>
+      <h4>  <span className="fw-bold">
+  {role === "COUNTER"
+    ? "Counter Dashboard"
+    : branch.branchName
+      ? `Welcome ${branch.branchName} Groups`
+      : "Dashboard"}
+</span></h4>
         <div className="ms-auto d-flex align-items-center gap-3">
           
 

@@ -6,12 +6,14 @@ import API from "../../../config/api";
 function AddCounter() {
   const [schools, setSchools] = useState([]);
 
-  const [form, setForm] = useState({
-    name: "",
-    schoolId: "",
-    schoolName: "",
-    mobileNo: ""
-  });
+ const [form, setForm] = useState({
+  name: "",
+  schoolId: "",
+  schoolName: "",
+  mobileNo: "",
+  email: "",
+  password: ""
+});
 
   const { branchId } = useParams();
   const navigate = useNavigate();
@@ -46,6 +48,8 @@ function AddCounter() {
 
     try {
       const token = localStorage.getItem("token");
+      
+      console.log(form);
 
       await API.post(
         `/api/counters/addCounter`,
@@ -81,8 +85,8 @@ function AddCounter() {
         </div>
 
         <div className="mb-3">
-                        <label className="form-label">Mobile No. :</label>
-              <input
+          <label className="form-label">Mobile No. :</label>
+          <input
           className="form-control"
           placeholder="Counter Mobile No."
           value={form.mobileNo}
@@ -92,6 +96,33 @@ function AddCounter() {
          required />
         </div>
 
+          <div className="mb-3">
+            <label className="form-label">Counter Email :</label>
+            <input
+              type="email"
+              className="form-control"
+              placeholder="Enter Counter Login Email"
+              value={form.email}
+              onChange={(e) =>
+                setForm({ ...form, email: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Password :</label>
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Default Password: counter123"
+              value={form.password}
+              onChange={(e) =>
+                setForm({ ...form, password: e.target.value })
+              }
+            />
+          </div>
+      
           <div className="mb-3">
                         <label className="form-label">School Name:</label>
         <select

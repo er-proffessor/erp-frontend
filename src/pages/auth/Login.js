@@ -22,13 +22,16 @@ function Login() {
             {email, password}
           );
 
-          const {token, role, branchId} = response.data;
+          const { token, role, branchId, counterId } = response.data;
 
           localStorage.setItem("token", token);
           localStorage.setItem("role", role);
           localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("branchId", branchId );
-
+          if(counterId){
+                          localStorage.setItem("counterId", counterId);
+                          
+                      }
           // Role Based Redirect
 
           if(role === "SUPER_ADMIN"){
@@ -36,6 +39,9 @@ function Login() {
           }
           else if(role === "CLIENT"){
             navigate(`/branches/${branchId}`);
+          }
+          else if(role === "COUNTER"){
+            navigate(`/branches/${branchId}/counter-dashboard`);
           }
 
         } 
