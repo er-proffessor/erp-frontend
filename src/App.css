@@ -38,6 +38,30 @@
   transform: translateX(3px);
 }
 
+.dashboard-card {
+  transition: all 0.25s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 18px 35px rgba(0,0,0,0.12) !important;
+}
+
+
+.dashboard-card:active {
+  transform: scale(0.97);
+}
+
+.dashboard-card i {
+  transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover i {
+  transform: scale(1.15) rotate(5deg);
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

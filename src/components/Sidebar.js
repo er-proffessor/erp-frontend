@@ -165,9 +165,9 @@ const navStyle = ({ isActive }) => ({
   borderRadius: "8px",
   textDecoration: "none",
   color: isActive ? "#2da05f" : "#333",
-  background: isActive ? "#e8f5e9" : "transparent",
+  background: isActive ? "rgba(76, 175, 80, 0.12)" : "transparent",
   borderLeft: isActive ? "4px solid #4CAF50" : "4px solid transparent",
-  boxShadow: isActive ? "0 4px 8px rgba(0,0,0,0.05)" : "none",
+  boxShadow: isActive ? "0 4px 12px rgba(76,175,80,0.2)" : "none",
   fontWeight: isActive ? "bold" : "500",
   fontSize: isActive ? "25px" : "24px",
   transition: "all 0.2s ease"
@@ -206,9 +206,11 @@ const dropdownStyle = (open) => ({
 });
 
 const titleStyle = {
-  fontSize: "30px",
-  fontWeight: "bold",
-  marginBottom: "20px"
+  fontSize: "25px",
+  fontWeight: "600",
+  marginBottom: "25px",
+   color: "#1b5e20",
+  letterSpacing: "0.5px"
 };
 
 export default Sidebar;
