@@ -109,6 +109,7 @@
 import { NavLink, useParams } from "react-router-dom";
 import { useState } from "react";
 
+
 function CounterSidebar() {
   const { branchId } = useParams();
   const counterId = localStorage.getItem("counterId");
@@ -120,7 +121,7 @@ function CounterSidebar() {
 
   return (
     <div className="bg-white border-end text-dark vh-100 p-3" style={{ width: "260px" }}>
-      
+     
       <h5 className="mb-4 fw-bold">
         Counter Dashboard
       </h5>

@@ -28,6 +28,16 @@
   color: #61dafb;
 }
 
+.sidebar a:hover {
+  background: #b1e9d6 !important;
+  transform: translateX(3px);
+}
+
+.menu-hover:hover {
+  background: #c1e7da;
+  transform: translateX(3px);
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

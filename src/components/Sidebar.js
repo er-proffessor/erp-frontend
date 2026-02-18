@@ -2,50 +2,55 @@ import { NavLink, useParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import API from "../config/api";
 
+import {
+  FaSchool,
+  FaBook,
+  FaHome,
+  FaUsers,
+  FaBoxes,
+  FaChevronDown,
+  FaChevronUp,
+   FaPlusCircle,
+  FaList,
+  
+} from "react-icons/fa";
+
 function Sidebar() {
   const { branchId } = useParams();
-  // const counterId = localStorage.getItem("counterId");
 
   const [school, setSchool] = useState(false);
   const [books, setBooks] = useState(false);
-  // const [stockAssign, setStockAssign] = useState(false);
   const [counter, setCounter] = useState(false);
+  const [branch, setBranch] = useState({});
+  // const [inventory, setInventory] = useState(false);
 
   const toggleSchool = () => {
-  setSchool(!school);
-  // setOrders(false);
-  setBooks(false);
-  setCounter(false);
-};
+    setSchool(!school);
+    setBooks(false);
+    setCounter(false);
+  };
 
-const toggleBooks = () => {
-  setBooks(!books);
-  setSchool(false);
-  // setOrders(false);
-  setCounter(false);
-};
-const toggleCounter = () => {
-  setCounter(!counter);
-  setBooks(false);
-  setSchool(false);
-  // setOrders(false);
-};
+  const toggleBooks = () => {
+    setBooks(!books);
+    setSchool(false);
+    setCounter(false);
+  };
 
-
-  const [branch, setBranch] = useState({});
+  const toggleCounter = () => {
+    setCounter(!counter);
+    setBooks(false);
+    setSchool(false);
+  };
 
   const fetchBranchDetails = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await API.get(
-        `/api/branches/${branchId}/branch`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await API.get(`/api/branches/${branchId}/branch`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setBranch(response.data.data);
     } catch (error) {
@@ -54,191 +59,156 @@ const toggleCounter = () => {
   }, [branchId]);
 
   useEffect(() => {
-    if (branchId) {
-      fetchBranchDetails();
-    }
+    if (branchId) fetchBranchDetails();
   }, [branchId, fetchBranchDetails]);
 
-
-
   return (
-    <div className="bg-white boder-end text-dark vh-100 p-3" style={{ width: "260px" }}>
-      <h5 className="mb-4 fw-bold">{branch.branchName
-            ? `${branch.branchName}`
-            : "Dashboard"}</h5>
-      <div className="text-muted mb-4">
-        <h6>Dashboar Menu</h6>
-      </div>
+    <div className="sidebar"
+      style={{
+        width: "260px",
+        height: "100vh",
+        overflowY: "auto",
+        // background: "#ffffff",
+        background: "linear-gradient(to bottom, #afc5c6, #9ee5f2)",
+        boxShadow: "4px 0 10px rgba(130, 67, 67, 0.05)",
+        padding: "20px",
+        transition: "all 0.3s ease"
+      }}
+    >
+      {/* <h4 style={{ fontWeight: "700", marginBottom: "20px", color: "#2e7d32" }}> */}
+      <h3 style={titleStyle}>
+        {branch.branchName ? branch.branchName : "Dashboard"}
+      </h3>
+
       <ul className="nav flex-column">
 
         {/* DASHBOARD */}
         <li className="nav-item mb-2">
           <NavLink
             to={`/branches/${branchId}`}
-            className="nav-link text-black"
+            style={navStyle}
           >
-            Dashboard
+            <FaHome /> Dashboard
           </NavLink>
         </li>
 
-        {/* SCHOOL (WITH DROPDOWN) */}
+        {/* SCHOOL */}
         <li className="nav-item mb-2">
-          <div
-            className="nav-link text-black"
-            style={{ cursor: "pointer" }}
-            onClick={toggleSchool}
-          >
-            School {school ? "▲" : "▼"}
+          <div onClick={toggleSchool}  className="menu-hover" style={menuStyle}>
+            <FaSchool /> School {school ? <FaChevronUp /> : <FaChevronDown />}
           </div>
 
-          {school && (
-            <ul className="nav flex-column ms-3">
-              <li className="nav-item">
-                <NavLink
-                  to={`/branches/${branchId}/schools`}
-                  className="nav-link text-black"
-                >
-                  School List
-                </NavLink>
-              </li>
-
-              <li className="nav-item">
-                <NavLink
-                  to={`/branches/${branchId}/schools/add`}
-                  className="nav-link text-black"
-                >
-                  Add School
-                </NavLink>
-              </li>
-            </ul>
-          )}
+          <div style={dropdownStyle(school)}>
+            <NavLink to={`/branches/${branchId}/schools`} style={subNavStyle}>
+              <FaList />School List
+            </NavLink>
+            <NavLink to={`/branches/${branchId}/schools/add`} style={subNavStyle}>
+              <FaPlusCircle />Add School
+            </NavLink>
+          </div>
         </li>
 
-          {/* Books (WITH DROPDOWN) */}
+        {/* BOOKS */}
         <li className="nav-item mb-2">
-          <div
-            className="nav-link text-black"
-            style={{ cursor: "pointer" }}
-            onClick={toggleBooks}
-          >
-            Books {books ? "▲" : "▼"}
+          <div onClick={toggleBooks}  className="menu-hover" style={menuStyle}>
+            <FaBook /> Books {books ? <FaChevronUp /> : <FaChevronDown />}
           </div>
 
-          {books && (
-            <ul className="nav flex-column ms-3">
-              <li className="nav-item">
-                <NavLink
-                  to={`/branches/${branchId}/books`}
-                  className="nav-link text-black"
-                >
-                  Books List
-                </NavLink>
-              </li>
-
-              <li className="nav-item">
-                <NavLink
-                  to={`/branches/${branchId}/books/add`}
-                  className="nav-link text-black"
-                >
-                  Add Books
-                </NavLink>
-              </li>
-            </ul>
-          )}
+          <div style={dropdownStyle(books)}>
+            <NavLink to={`/branches/${branchId}/books`} style={subNavStyle}>
+              <FaList />Books List
+            </NavLink>
+            <NavLink to={`/branches/${branchId}/books/add`} style={subNavStyle}>
+              <FaPlusCircle />Add Books
+            </NavLink>
+          </div>
         </li>
 
-
-        {/* Orders (WITH DROPDOWN)
+        {/* COUNTERS */}
         <li className="nav-item mb-2">
-          <div
-            className="nav-link text-black"
-            style={{ cursor: "pointer" }}
-            onClick={toggleOrders}
-          >
-            Orders {orders ? "▲" : "▼"}
+          <div onClick={toggleCounter}  className="menu-hover"style={menuStyle}>
+            <FaUsers /> Counters {counter ? <FaChevronUp /> : <FaChevronDown />}
           </div>
 
-          {orders && (
-            <ul className="nav flex-column ms-3">
-              <li className="nav-item">
-                <NavLink
-                  to={counterId ? `/counter/${counterId}/orders` : "#"}
-                  className="nav-link text-black"
-                >
-                  Orders List
-                </NavLink>
-              </li>
+          <div style={dropdownStyle(counter)}>
+            <NavLink to={`/branches/${branchId}/counters`} style={subNavStyle}>
+              <FaList />Counters List
+            </NavLink>
+            <NavLink to={`/branches/${branchId}/counters/add`} style={subNavStyle}>
+              <FaPlusCircle />Add Counter
+            </NavLink>
+            <NavLink to={`/branches/${branchId}/counter-stock/assign`} style={subNavStyle}>
+              <FaBoxes />Assign Books
+            </NavLink>
+          </div>
+        </li>
 
-              <li className="nav-item">
-                <NavLink
-                  to={counterId ? `/counter/${counterId}/sell` : "#"}
-                  className="nav-link text-black"
-                >
-                  Add Orders
-                </NavLink>
-              </li>
-            </ul>
-          )}
+        {/* INVENTORY
+        <li className="nav-item mt-2">
+          <div  className="menu-hover"style={menuStyle}>
+          <NavLink to={`/branches/${branchId}/inventory`} style={navStyle}>
+            <FaWarehouse /> Inventory 
+          </NavLink>
+          </div>
         </li> */}
-
-          
-
-        {/* Counter (WITH DROPDOWN) */}
-        <li className="nav-item mb-2">
-          <div
-            className="nav-link text-black"
-            style={{ cursor: "pointer" }}
-            onClick={toggleCounter}
-          >
-            Counters {counter ? "▲" : "▼"}
-          </div>
-
-          {counter && (
-            <ul className="nav flex-column ms-3">
-              <li className="nav-item">
-                <NavLink
-                  to={`/branches/${branchId}/counters`}
-                  className="nav-link text-black"
-                >
-                  Counters List
-                </NavLink>
-              </li>
-
-              <li className="nav-item">
-                <NavLink
-                  to={`/branches/${branchId}/counters/add`}
-                  className="nav-link text-black"
-                >
-                  Add Counter
-                </NavLink>
-              </li>
-
-              <li className="nav-item">
-                <NavLink
-                  to={`/branches/${branchId}/counter-stock/assign`}
-                  className="nav-link text-black"
-                >
-                  Assign Books to Counter
-                </NavLink>
-              </li>
-            </ul>
-          )}
-        </li>
-
-   
-        {/* INVENTORY */}
-        <li className="nav-item">
-          <NavLink
-            to={`/branches/${branchId}`}
-            className="nav-link text-black"
-          >
-            Inventory / Stocks
-          </NavLink>
-        </li>
 
       </ul>
     </div>
   );
 }
+
+const navStyle = ({ isActive }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
+  padding: "12px",
+  borderRadius: "8px",
+  textDecoration: "none",
+  color: isActive ? "#2da05f" : "#333",
+  background: isActive ? "#e8f5e9" : "transparent",
+  borderLeft: isActive ? "4px solid #4CAF50" : "4px solid transparent",
+  boxShadow: isActive ? "0 4px 8px rgba(0,0,0,0.05)" : "none",
+  fontWeight: isActive ? "bold" : "500",
+  fontSize: isActive ? "25px" : "24px",
+  transition: "all 0.2s ease"
+});
+
+const menuStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: "10px",
+  cursor: "pointer",
+  borderRadius: "8px",
+   fontSize: "20px",   // 🔥 change here anytime
+  fontWeight: "700",
+  transition: "0.2s",
+};
+
+const subNavStyle = ({ isActive }) => ({
+  display: "block",
+  padding: "8px 20px",
+  marginTop: "5px",
+  borderRadius: "6px",
+  textDecoration: "none",
+  color: isActive ? "#2e7d32" : "#555",
+  background: isActive ? "#e8f5e9" : "transparent",
+  borderLeft: isActive ? "3px solid #4CAF50" : "3px solid transparent",
+  fontWeight: isActive ? "bold" : "500",
+  fontSize: isActive ? "18px" : "17px",
+  transition: "all 0.2s ease"
+});
+
+const dropdownStyle = (open) => ({
+  maxHeight: open ? "200px" : "0px",
+  overflow: "hidden",
+  transition: "all 0.3s ease"
+});
+
+const titleStyle = {
+  fontSize: "30px",
+  fontWeight: "bold",
+  marginBottom: "20px"
+};
 
 export default Sidebar;
