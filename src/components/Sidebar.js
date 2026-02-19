@@ -168,7 +168,7 @@ const navStyle = ({ isActive }) => ({
   borderLeft: isActive ? "4px solid #4CAF50" : "4px solid transparent",
   boxShadow: isActive ? "0 4px 12px rgba(76,175,80,0.2)" : "none",
   fontWeight: isActive ? "bold" : "500",
-  fontSize: isActive ? "25px" : "24px",
+  fontSize: isActive ? "21px" : "20px",
   transition: "all 0.2s ease"
 });
 
@@ -196,7 +196,7 @@ const subNavStyle = ({ isActive }) => ({
   background: isActive ? "#e8f5e9" : "transparent",
   borderLeft: isActive ? "3px solid #4CAF50" : "3px solid transparent",
   fontWeight: isActive ? "bold" : "500",
-  fontSize: isActive ? "18px" : "17px",
+  fontSize: isActive ? "16px" : "15px",
   transition: "all 0.2s ease"
 });
 
