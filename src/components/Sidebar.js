@@ -68,8 +68,7 @@ function Sidebar() {
         width: "260px",
         height: "100vh",
         overflowY: "auto",
-        // background: "#ffffff",
-        background: "linear-gradient(to bottom, #afc5c6, #9ee5f2)",
+        background: "linear-gradient(to bottom, #f1b1d0, #dbb696)",
         boxShadow: "4px 0 10px rgba(130, 67, 67, 0.05)",
         padding: "20px",
         transition: "all 0.3s ease"
@@ -186,7 +185,9 @@ const menuStyle = {
 };
 
 const subNavStyle = ({ isActive }) => ({
-  display: "block",
+  display: "flex",
+  alignItems: "center",
+  gap: "10px", 
   padding: "8px 20px",
   marginTop: "5px",
   borderRadius: "6px",
@@ -209,7 +210,7 @@ const titleStyle = {
   fontSize: "25px",
   fontWeight: "600",
   marginBottom: "25px",
-   color: "#1b5e20",
+   color: "#1d5eb3",
   letterSpacing: "0.5px"
 };
 
