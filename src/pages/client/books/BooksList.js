@@ -1,4 +1,4 @@
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useParams, useNavigate } from "react-router-dom";
 // import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
@@ -6,6 +6,8 @@ function BooksList() {
   const { branchId } = useParams();
   const {books} = useOutletContext();
 
+  const navigate = useNavigate();
+  
   console.log("Books from outlet:", books);
 
   return (
@@ -57,7 +59,8 @@ function BooksList() {
                     <td>{book.sellPrice}</td>
                     <td>{book.quantity}</td>
                     <td>
-                      <button className="btn btn-sm btn-outline-primary me-2">
+                      <button className="btn btn-sm btn-outline-primary me-2" 
+                      onClick={() => navigate(`/branches/${branchId}/books/edit/${book._id}`)}>
                         ✏️
                       </button>
                       <button className="btn btn-sm btn-outline-danger">

@@ -39,7 +39,7 @@ function CounterList() {
 
   
   const handleEdit = (id) => {
-    navigate(`edit/${id}`);
+    navigate(`/branches/${branchId}/counters/edit/${id}`);
   };
 
 

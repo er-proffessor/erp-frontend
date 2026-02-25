@@ -74,6 +74,36 @@ function DashboardLayout() {
     }
   };
 
+    // Update School
+
+    const updateSchool = async (id, updatedSchool) => {
+  if(role === "COUNTER") return;
+
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await API.put(
+      `/api/schools/update/${id}`,
+      updatedSchool,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setSchools(prev =>
+      prev.map(school =>
+        school._id === id ? res.data : school
+      )
+    );
+
+  } catch (error) {
+    console.error(error);
+    alert("Failed to update school");
+  }
+};
+
   // Get Books List
 
     const [books, setBooks] = useState([]);
@@ -143,6 +173,36 @@ function DashboardLayout() {
     //     setBooks([...books, book]);
     // };
 
+
+// Update Book
+const updateBook = async (id, updatedBook) => {
+  if(role === "COUNTER") return;
+
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await API.put(
+      `/api/books/update/${id}`,
+      updatedBook,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setBooks(prev =>
+      prev.map(book =>
+        book._id === id ? res.data : book
+      )
+    );
+
+  } catch (error) {
+    console.error(error);
+    alert("Failed to update book");
+  }
+};
+
   return (
     <>
     <div className="d-flex">
@@ -160,7 +220,7 @@ function DashboardLayout() {
         :
          (
          <div className="container-fluid px-4 py-3 bg-light" style={{ minHeight: "100vh" }}>
-            <Outlet context={{schools, addSchool, books, addBooks, fetchBooks}} />         
+            <Outlet context={{schools, addSchool, updateSchool, books, addBooks, updateBook, fetchBooks}} />         
           </div>
         )}
       </div>

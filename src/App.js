@@ -36,10 +36,13 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="schools" element={<SchoolsList />} />
           <Route path="schools/add" element={<AddSchool />}/>
+          <Route path="schools/edit/:id" element={<AddSchool />} />
           <Route path="books" element={<BooksList />}/>
           <Route path="books/add" element={<AddBook />}/>
+          <Route path="books/edit/:id" element={<AddBook />} />
           <Route path="counters" element={<CountersList />}/>
           <Route path="counters/add" element={<AddCounter />}/>
+          <Route path="counters/edit/:id" element={<AddCounter />} />
           <Route path="inventory" element={<Inventory />}/>
           <Route path="counter-stock/:counterId" element={<CounterStock />}/>
           <Route path="counter/:counterId/sell" element={<AddOrder />} />

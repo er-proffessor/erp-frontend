@@ -6,6 +6,7 @@ function SellBooks() {
   const counterId = localStorage.getItem("counterId");
    const branchId = localStorage.getItem("branchId");
 
+  const [selectedClass, setSelectedClass] = useState("");
   const [books, setBooks] = useState([]);
   const [form, setForm] = useState({
     bookId: "",
@@ -30,11 +31,18 @@ function SellBooks() {
     } catch (err) {
       console.error("Error fetching books", err);
     }
-  }, [counterId]);
+    }, [counterId]);
 
-  useEffect(() => {
-    fetchAvailableBooks();
-  }, [fetchAvailableBooks]);
+      useEffect(() => {
+        fetchAvailableBooks();
+      }, [fetchAvailableBooks]);
+
+      const classList = [...new Set(books.map(book => book.className))];
+
+      const filteredBooks = selectedClass
+      ? books.filter(book => book.className === selectedClass)
+      : [];
+
 
   // Handle Form Change
   const handleChange = (e) => {
@@ -88,6 +96,26 @@ function SellBooks() {
 
       <form onSubmit={handleSubmit} className="mb-4">
 
+          <div className="mb-2">
+          <label>Select Class</label>
+          <select
+            value={selectedClass}
+            onChange={(e) => {
+              setSelectedClass(e.target.value);
+              setForm({ ...form, bookId: "" }); // reset book
+            }}
+            className="form-control"
+            required
+          >
+            <option value="">Select Class</option>
+            {classList.map(cls => (
+              <option key={cls} value={cls}>
+                {cls}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="mb-2">
           <label>Book</label>
           <select
@@ -96,9 +124,10 @@ function SellBooks() {
             onChange={handleChange}
             required
             className="form-control"
+            disabled={!selectedClass}
           >
             <option value="">Select Book</option>
-            {books.map(book => (
+            {filteredBooks.map(book => (
               <option key={book.bookId} value={book.bookId}>
                 {book.bookName} (Available: {book.availableQuantity})
               </option>

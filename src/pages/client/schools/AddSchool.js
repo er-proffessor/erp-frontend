@@ -1,49 +1,67 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
 
 
 function AddSchool() {
     
-    const {addSchool} = useOutletContext();
+    const {addSchool, updateSchool, schools} = useOutletContext();
 
-    const { branchId } = useParams();
+    const CLASS_OPTIONS = ["Nursery","LKG","UKG","1","2","3","4","5","6","7","8","9","10","11","12"];
+
+    const { branchId, id } = useParams();
+    const isEditMode = Boolean(id);
     const navigate = useNavigate();
 
     const [schoolName, setSchoolName] = useState("");
     const [schoolAddress, setSchoolAddress] = useState("");
     const [schoolOwnerMobile, setSchoolOwnerMobile] = useState("");
     const [schoolClasses, setSchoolClasses] = useState([]);
-    const [classInput, setClassInput] = useState("");
+   
+    const toggleClass = (cls) => {
+  if (schoolClasses.includes(cls)) {
+    setSchoolClasses(schoolClasses.filter(c => c !== cls));
+  } else {
+    setSchoolClasses([...schoolClasses, cls]);
+  }
+};
 
-    const addClass = () => {
-        if (classInput.trim() !== "") {
-            setSchoolClasses([...schoolClasses, classInput]);
-            setClassInput("");
-        }
-    };
+    useEffect(() => {
+  if (isEditMode && schools.length) {
+    const existing = schools.find(s => s._id === id);
 
-    const removeClass = (index) => {
-        setSchoolClasses(schoolClasses.filter((_, i) => i !== index));
-    };
+    if (existing) {
+      setSchoolName(existing.schoolName || "");
+      setSchoolAddress(existing.schoolAddress || "");
+      setSchoolOwnerMobile(existing.schoolOwnerMobile || "");
+      setSchoolClasses(existing.schoolClasses || []);
+    }
+  }
+}, [id, isEditMode, schools]);
+
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+  e.preventDefault();
 
-        const newSchool = {
-            schoolName,
-            schoolAddress,
-            schoolOwnerMobile,
-            schoolClasses,
-        };
+  const payload = {
+    schoolName,
+    schoolAddress,
+    schoolOwnerMobile,
+    schoolClasses: schoolClasses.sort((a,b)=>a.localeCompare(b))
+  };
 
-       await addSchool(newSchool);
-        navigate(`/branches/${branchId}/schools`);
-    };
+  if (isEditMode) {
+    await updateSchool(id, payload);
+  } else {
+    await addSchool(payload);
+  }
+
+  navigate(`/branches/${branchId}/schools`);
+};
 
     return (
         <div className="card">
-            <div className="card-header fw-bold">Add School</div>
+            <div className="card-header fw-bold">{isEditMode ? "Edit School" : "Add School"}</div>
             <div className="card-body">
                 <form onSubmit={handleSubmit}>
 
@@ -82,33 +100,38 @@ function AddSchool() {
                     {/* CLASSES MULTI ADD */}
                     <div className="mb-3">
                         <label className="form-label">Classes</label>
-                        <div className="d-flex gap-2">
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={classInput}
-                                onChange={(e) => setClassInput(e.target.value)}
-                                placeholder="Eg: Nursery, 1, 10"
-                            />
-                            <button type="button" className="btn btn-primary" onClick={addClass}>
-                                Add
-                            </button>
+                        <div className="border rounded p-3" style={{ maxHeight: "200px", overflowY: "auto" }}>
+    {CLASS_OPTIONS.map((cls) => (
+      <div key={cls} className="form-check">
+        <input
+          className="form-check-input"
+          type="checkbox"
+          checked={schoolClasses.includes(cls)}
+          onChange={() => toggleClass(cls)}
+          id={`class-${cls}`}
+        />
+        <label className="form-check-label" htmlFor={`class-${cls}`}>
+          Class {cls}
+        </label>
+      </div>
+    ))}
+  </div>
                         </div>
 
                         <div className="mt-2">
-                            {schoolClasses.map((cls, index) => (
-                                <span key={index} className="badge bg-secondary me-2">
-                                    {cls}
-                                    <span
-                                        style={{ cursor: "pointer", marginLeft: "6px" }}
-                                        onClick={() => removeClass(index)}
-                                    >
-                                        ×
-                                    </span>
-                                </span>
-                            ))}
-                        </div>
-                    </div>
+  {schoolClasses.map((cls) => (
+    <span key={cls} className="badge bg-primary me-2">
+      {cls}
+      <span
+        style={{ cursor: "pointer", marginLeft: "6px" }}
+        onClick={() => toggleClass(cls)}
+      >
+        ×
+      </span>
+    </span>
+  ))}
+</div>
+                    
 
                     <button className="btn btn-success">Save School</button>
                 </form>

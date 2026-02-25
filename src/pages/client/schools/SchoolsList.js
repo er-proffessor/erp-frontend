@@ -1,4 +1,4 @@
-import {Link, useParams } from "react-router-dom";
+import {Link, useParams, useNavigate } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
 
 
@@ -7,6 +7,8 @@ function SchoolsList() {
     const { schools = [] } = useOutletContext() || {};
 
     console.log(schools);
+
+    const navigate = useNavigate();
 
   return (
     <div className="container-fluid">
@@ -57,7 +59,8 @@ function SchoolsList() {
                     </td> */}
                     <td>{school.schoolClasses?.join(", ")}</td>
                     <td>
-                      <button className="btn btn-sm btn-outline-primary me-2">
+                      <button className="btn btn-sm btn-outline-primary me-2"
+                       onClick={()=>navigate(`/branches/${branchId}/schools/edit/${school._id}`)}>
                         ✏️
                       </button>
                       <button className="btn btn-sm btn-outline-danger">

@@ -15,7 +15,8 @@ function AddCounter() {
   password: ""
 });
 
-  const { branchId } = useParams();
+  const { branchId, id } = useParams();
+  const isEditMode = Boolean(id);
   const navigate = useNavigate();
 
   const fetchSchools = useCallback(async () => {
@@ -37,19 +38,78 @@ function AddCounter() {
     }
   }, [branchId]);
 
+
+
+  const fetchCounter = useCallback(async () => {
+  if (!id) return;
+
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await API.get(
+      `/api/counters/single/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(res.data);
+
+    const data = res.data.data;
+
+    setForm({
+      name: data.name || "",
+      schoolId: data.schoolId?._id || "",
+      schoolName: data.schoolId?.schoolName || "",
+      mobileNo: data.mobileNo || "",
+      email: data.email || "",
+      password: "" // keep blank in edit
+    });
+
+  } catch (err) {
+    console.error("Fetch counter error:", err);
+  }
+}, [id]);
+
+
   useEffect(() => {
-    if (branchId) {
-      fetchSchools();
-    }
-  }, [branchId, fetchSchools]);
+  if (branchId) {
+    fetchSchools();
+  }
+
+  if (id) {
+    fetchCounter();
+  }
+}, [branchId, fetchSchools, fetchCounter, id]);
+
 
   const submitHandler = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const token = localStorage.getItem("token");
-      
-      console.log(form);
+  try {
+    const token = localStorage.getItem("token");
+
+    if (isEditMode) {
+
+      const payload = { ...form };
+
+if (!payload.password) {
+  delete payload.password;
+}
+
+await API.put(
+  `/api/counters/update/${id}`,
+  payload,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
+
+    } else {
 
       await API.post(
         `/api/counters/addCounter`,
@@ -61,15 +121,18 @@ function AddCounter() {
         }
       );
 
-      navigate(`/branches/${branchId}/counters`);
-    } catch (error) {
-      console.error("Add counter error:", error);
     }
-  };
+
+    navigate(`/branches/${branchId}/counters`);
+
+  } catch (error) {
+    console.error("Counter save error:", error);
+  }
+};
 
   return (
     <div className="card">
-            <div className="card-header fw-bold">Add Counter</div>
+            <div className="card-header fw-bold">{isEditMode ? "Edit Counter" : "Add Counter"}</div>
             <div className="card-body">
               <form onSubmit={submitHandler} className="max-w-md">
               <div className="mb-3">
@@ -115,7 +178,7 @@ function AddCounter() {
             <input
               type="password"
               className="form-control"
-              placeholder="Default Password: counter123"
+              placeholder={isEditMode ? "Leave blank to keep existing password" : "Default Password: counter123"}
               value={form.password}
               onChange={(e) =>
                 setForm({ ...form, password: e.target.value })

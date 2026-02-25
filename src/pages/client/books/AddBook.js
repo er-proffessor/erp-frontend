@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
 
+
 function AddBook() {
-    const {branchId} = useParams();
+    const { branchId, id } = useParams();
+    const isEditMode = Boolean(id);
     const navigate = useNavigate();
-    const {addBooks} = useOutletContext();
+    const { addBooks, updateBook, books } = useOutletContext();
 
     const [bookName, setBookName] = useState("");
     const [publisherName, setPublisherName] = useState("");
@@ -16,27 +18,50 @@ function AddBook() {
     const [sellPrice, setSellPrice] = useState("");
     const [quantity, setQuantity] = useState("");
 
+    useEffect(() => {
+  if (isEditMode && books.length) {
+    const existingBook = books.find(b => b._id === id);
+    if (existingBook) {
+      setBookName(existingBook.bookName);
+      setPublisherName(existingBook.publisherName);
+      setClassName(existingBook.className);
+      setSubject(existingBook.subject);
+      setMrp(existingBook.mrp);
+      setPurchasePrice(existingBook.purchasePrice);
+      setSellPrice(existingBook.sellPrice);
+      setQuantity(existingBook.quantity);
+    }
+  }
+}, [id, isEditMode, books]);
+
     const handleSubmit = (e) => {
-        e.preventDefault();
+  e.preventDefault();
 
-        addBooks({
-            bookName,
-            publisherName,
-            className,
-            subject,
-            mrp: Number(mrp),
-            purchasePrice: Number(purchasePrice),
-            sellPrice: Number(sellPrice),
-            quantity: Number(quantity)
-        });
+  const payload = {
+    bookName,
+    publisherName,
+    className,
+    subject,
+    mrp: Number(mrp),
+    purchasePrice: Number(purchasePrice),
+    sellPrice: Number(sellPrice),
+    quantity: Number(quantity)
+  };
 
-        navigate(`/branches/${branchId}/books`);
-    };
+  if (isEditMode) {
+    updateBook(id, payload);
+  } else {
+    addBooks(payload);
+  }
+
+  navigate(`/branches/${branchId}/books`);
+};
+
 
     return (
         <div className="card">
             <div className="card-header">
-                <h5>Add Book</h5>
+                <h5>{isEditMode ? "Edit Book" : "Add Book"}</h5>
             </div>
 
             <div className="card-body">

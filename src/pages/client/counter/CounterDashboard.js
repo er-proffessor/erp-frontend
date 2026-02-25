@@ -64,8 +64,11 @@ function CounterDashboard() {
       <table className="table table-bordered">
         <thead>
           <tr>
+            <th>School</th>
+            <th>Class</th>
             <th>Book Name</th>
-            <th>Price</th>
+            <th>MRP</th>
+            <th>Selling Price</th>
             <th>Available Qty</th>
           </tr>
         </thead>
@@ -77,8 +80,11 @@ function CounterDashboard() {
           ) : (
             stock.map((item) => (
               <tr key={item.stockId}>
+                <td>{item.schoolName}</td>
+                <td>{item.className}</td>
                  <td>{item.bookName}</td>
-                <td>{item.price}</td>
+                 <td>{item.mrp}</td>
+                <td>{item.sellPrice}</td>
                 <td>{item.availableQuantity}</td>
               </tr>
             ))
