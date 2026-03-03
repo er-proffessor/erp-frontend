@@ -34,10 +34,13 @@ function CounterStock() {
   }, [fetchStock]);
 
   return (
-    <div>
-      <h2>Counter Stock</h2>
+    <div className="card">
+    <div className="card-header fw-bold">
+      Counter Stock
+    </div>
 
-      <table border="1">
+    <div className="table-responsive">
+      <table className="table table-bordered mb-0">
         <thead>
           <tr>
             <th>Book</th>
@@ -64,6 +67,7 @@ function CounterStock() {
 
         </tbody>
       </table>
+    </div>
     </div>
   );
 }

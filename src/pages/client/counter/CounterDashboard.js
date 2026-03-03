@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../../config/api";
 
@@ -8,11 +8,10 @@ function CounterDashboard() {
   const navigate = useNavigate();
 
   const counterId = localStorage.getItem("counterId");
-
   const branchId = localStorage.getItem("branchId");
 
-  useEffect(() => {
-  const fetchStock = async () => {
+  
+  const fetchStock = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
 
@@ -32,13 +31,15 @@ function CounterDashboard() {
     } catch (err) {
       console.error("Stock fetch error", err);
     }
-  };
+  }, [counterId]);
 
-  
-    if(counterId){
+
+    useEffect(() => {
+    if (counterId) {
       fetchStock();
     }
-  }, [counterId]);
+  }, [counterId, fetchStock]);
+
 
   return (
     <div className="container mt-4">
@@ -75,7 +76,7 @@ function CounterDashboard() {
         <tbody>
           {stock.length === 0 ? (
             <tr>
-              <td colSpan="3">No Stock Available</td>
+              <td colSpan="6" className="text-center">No Stock Available</td>
             </tr>
           ) : (
             stock.map((item) => (

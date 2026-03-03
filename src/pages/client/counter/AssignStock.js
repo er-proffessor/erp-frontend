@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../../../config/api";
 import { useOutletContext } from "react-router-dom";
@@ -6,56 +6,57 @@ import { useOutletContext } from "react-router-dom";
 function AssignStock() {
   const { branchId } = useParams();
 
-  const [counters, setCounters] = useState([]);
-  const [books, setBooks] = useState([]);
+  // const [counters, setCounters] = useState([]);
+  // const [books, setBooks] = useState([]);
 
   const [form, setForm] = useState({
     counterId: "",
     bookId: "",
     quantity: ""
   });
+  const { counters, books, fetchBooks } = useOutletContext();
 
-    const { fetchBooks: refreshMainBooks } = useOutletContext();
+    // const { fetchBooks: refreshMainBooks } = useOutletContext();
 
   // Fetch Counters
-  const fetchCounters = useCallback(async () => {
-    try {
-      const res = await API.get(`/api/branches/${branchId}/counters`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
-      });
+  // const fetchCounters = useCallback(async () => {
+  //   try {
+  //     const res = await API.get(`/api/branches/${branchId}/counters`, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`
+  //       }
+  //     });
       
-      console.log("Counters:", res.data);
+  //     console.log("Counters:", res.data);
 
-       setCounters(res.data.data || res.data || []);
+  //      setCounters(res.data.data || res.data || []);
 
-    } catch (err) {
-      console.error(err);
-    }
-  }, [branchId]);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }, [branchId]);
 
   // Fetch Books (Branch Stock)
-  const fetchBooks = useCallback(async () => {
-    try {
-      const res = await API.get(`/api/branches/${branchId}/books`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
-      });
-       console.log("Books:", res.data);
+  // const fetchBooks = useCallback(async () => {
+  //   try {
+  //     const res = await API.get(`/api/branches/${branchId}/books`, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`
+  //       }
+  //     });
+  //      console.log("Books:", res.data);
 
-    setBooks(res.data.data || res.data || []);
+  //   setBooks(res.data.data || res.data || []);
 
-    } catch (err) {
-      console.error(err);
-    }
-  }, [branchId]);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }, [branchId]);
 
-  useEffect(() => {
-    fetchCounters();
-    fetchBooks();
-  }, [fetchCounters, fetchBooks]);
+  // useEffect(() => {
+  //   fetchCounters();
+  //   fetchBooks();
+  // }, [fetchCounters, fetchBooks]);
 
   const handleChange = (e) => {
     setForm({
@@ -89,7 +90,7 @@ function AssignStock() {
         quantity: ""
       });
 
-      await refreshMainBooks();   // 🔥 update BooksList globally
+      // await refreshMainBooks();   // 🔥 update BooksList globally
       await fetchBooks();               // refresh dropdown list here
 
     } catch (err) {
@@ -98,9 +99,11 @@ function AssignStock() {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="card">
+    <div className="card-header fw-bold">
       <h3>Assign Stock to Counter</h3>
 
+      <div className="card-body">
       <form onSubmit={handleSubmit}>
 
         <div className="mb-2">
@@ -157,6 +160,8 @@ function AssignStock() {
         </button>
 
       </form>
+      </div>
+    </div>
     </div>
   );
 }

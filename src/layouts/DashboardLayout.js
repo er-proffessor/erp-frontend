@@ -13,7 +13,8 @@ function DashboardLayout() {
   const {branchId} = useParams();
   const [schoolsLoading, setSchoolsLoading] = useState(role !== "COUNTER");
   const [booksLoading, setBooksLoading] = useState(role !== "COUNTER");
-
+  const [counters, setCounters] = useState([]);
+  const [countersLoading, setCountersLoading] = useState(role !== "COUNTER");
 
 
   // Get School List
@@ -203,6 +204,136 @@ const updateBook = async (id, updatedBook) => {
   }
 };
 
+  // fetch counter list
+
+  const fetchCounters = useCallback(async () => {
+  if (!branchId || role === "COUNTER") return;
+
+  try {
+    setCountersLoading(true);
+
+    const token = localStorage.getItem("token");
+
+    const res = await API.get(
+      `/api/branches/${branchId}/counters`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setCounters(res.data?.data || res.data || []);
+
+  } catch (error) {
+    console.error("Fetch counters error:", error);
+  } finally {
+    setCountersLoading(false);
+  }
+}, [branchId, role]);
+
+useEffect(() => {
+  if (!branchId || role === "COUNTER") return;
+  fetchCounters();
+}, [fetchCounters, branchId, role]);
+
+
+  // Add New Counter 
+
+  const addCounter = async (counterData) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await API.post(
+      `/api/counters/addCounter`,
+      {
+        ...counterData,
+        branchId
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    // ✅ Only update if valid response
+    if (res?.data) {
+      setCounters(prev => [...prev, res.data]);
+    }
+
+    return { success: true };
+
+  } catch (error) {
+    console.error("Add Counter Error:", error.response?.data || error);
+
+    return {
+      success: false,
+      message: error.response?.data?.message || "Failed to add Counter"
+    };
+  }
+};
+
+  // Update Counter
+
+const updateCounter = async (id, counterData) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await API.put(
+      `/api/counters/update/${id}`,
+      {
+        ...counterData,
+        branchId
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    // update UI instantly
+    setCounters(prev =>
+      prev.map(c =>
+        c._id === id ? res.data.data : c
+      )
+    );
+
+    return { success: true };
+
+  } catch (error) {
+    console.error("Update Counter Error:", error.response?.data || error);
+
+    return {
+      success: false,
+      message: error.response?.data?.message || "Update failed"
+    };
+  }
+};
+
+  // Delete Counter
+
+  const deleteCounter = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await API.delete(`/api/counters/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // remove from UI
+    setCounters(prev => prev.filter(c => c._id !== id));
+
+  } catch (error) {
+    console.error("Delete Counter Error:", error.response?.data || error);
+    alert(error.response?.data?.message || "Failed to delete counter");
+  }
+};
+
+
   return (
     <>
     <div className="d-flex">
@@ -214,13 +345,16 @@ const updateBook = async (id, updatedBook) => {
 
       <div className="flex-grow-1">
         <Header />
-        {(booksLoading || schoolsLoading) ? (
+        {(booksLoading || schoolsLoading || countersLoading) ? (
           <div className="text-center mt-5">Loading....</div>
         )
         :
          (
          <div className="container-fluid px-4 py-3 bg-light" style={{ minHeight: "100vh" }}>
-            <Outlet context={{schools, addSchool, updateSchool, books, addBooks, updateBook, fetchBooks}} />         
+            <Outlet context={{schools, addSchool, updateSchool, 
+              books, addBooks, updateBook, fetchBooks,
+              counters, fetchCounters, addCounter, updateCounter, deleteCounter
+              }} />         
           </div>
         )}
       </div>

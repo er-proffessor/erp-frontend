@@ -51,19 +51,21 @@ function OrderList() {
               </td>
             </tr>
           ) : (
-            orders.map(order => (
-              <tr key={order._id}>
-                <td>{order.bookId?.bookName}</td>
-                <td>{order.studentName || "-"}</td>
-                <td>{order.className || "-"}</td>
-                <td>{order.quantity}</td>
-                <td>₹ {order.price}</td>
-                <td>₹ {order.totalAmount}</td>
-                <td>
-                  {new Date(order.createdAt).toLocaleDateString()}
-                </td>
-              </tr>
-            ))
+            orders.map(order =>
+              order.books.map((bookItem, index) => (
+                <tr key={order._id + index}>
+                  <td>{bookItem.bookId?.bookName || "-"}</td>
+                  <td>{order.studentName || "-"}</td>
+                  <td>{order.className || "-"}</td>
+                  <td>{bookItem.quantity}</td>
+                  <td>₹ {bookItem.price}</td>
+                  <td>₹ {bookItem.total}</td>
+                  <td>
+                    {new Date(order.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))
+            )
           )}
         </tbody>
       </table>

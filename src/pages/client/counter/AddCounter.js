@@ -1,12 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
-
+import { useOutletContext } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../../../config/api";
 
 function AddCounter() {
-  const [schools, setSchools] = useState([]);
-
- const [form, setForm] = useState({
+  // const [schools, setSchools] = useState([]);
+  const { addCounter, updateCounter, schools } = useOutletContext();
+ 
+  const [form, setForm] = useState({
   name: "",
   schoolId: "",
   schoolName: "",
@@ -19,24 +20,24 @@ function AddCounter() {
   const isEditMode = Boolean(id);
   const navigate = useNavigate();
 
-  const fetchSchools = useCallback(async () => {
-    try {
-      const token = localStorage.getItem("token");
+  // const fetchSchools = useCallback(async () => {
+  //   try {
+  //     const token = localStorage.getItem("token");
 
-      const res = await API.get(
-        `/api/branches/${branchId}/schools`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  //     const res = await API.get(
+  //       `/api/branches/${branchId}/schools`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
 
-      setSchools(res.data?.data || []);
-    } catch (err) {
-      console.error("Fetch schools error:", err);
-    }
-  }, [branchId]);
+  //     setSchools(res.data?.data || []);
+  //   } catch (err) {
+  //     console.error("Fetch schools error:", err);
+  //   }
+  // }, [branchId]);
 
 
 
@@ -75,59 +76,80 @@ function AddCounter() {
 
 
   useEffect(() => {
-  if (branchId) {
-    fetchSchools();
-  }
+  // if (branchId) {
+  //   fetchSchools();
+  // }
 
   if (id) {
     fetchCounter();
   }
-}, [branchId, fetchSchools, fetchCounter, id]);
+}, [branchId, fetchCounter, id]);
 
 
-  const submitHandler = async (e) => {
+//   const submitHandler = async (e) => {
+//   e.preventDefault();
+
+//   try {
+//     const token = localStorage.getItem("token");
+
+//     if (isEditMode) {
+
+//       const payload = { ...form };
+
+// if (!payload.password) {
+//   delete payload.password;
+// }
+
+// await API.put(
+//   `/api/counters/update/${id}`,
+//   payload,
+//   {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   }
+// );
+
+//     } else {
+
+//       await API.post(
+//         `/api/counters/addCounter`,
+//         form,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       );
+
+//     }
+
+//     navigate(`/branches/${branchId}/counters`);
+
+//   } catch (error) {
+//     console.error("Counter save error:", error);
+//   }
+// };
+
+const submitHandler = async (e) => {
   e.preventDefault();
 
-  try {
-    const token = localStorage.getItem("token");
+  let result;
 
-    if (isEditMode) {
-
-      const payload = { ...form };
-
-if (!payload.password) {
-  delete payload.password;
-}
-
-await API.put(
-  `/api/counters/update/${id}`,
-  payload,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  if (isEditMode) {
+    const payload = { ...form };
+    if (!payload.password) delete payload.password;
+    result = await updateCounter(id, payload);
+  } else {
+    result = await addCounter(form);
   }
-);
 
-    } else {
-
-      await API.post(
-        `/api/counters/addCounter`,
-        form,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-    }
-
-    navigate(`/branches/${branchId}/counters`);
-
-  } catch (error) {
-    console.error("Counter save error:", error);
+  if (!result?.success) {
+    alert(result.message);
+    return;
   }
+
+  navigate(`/branches/${branchId}/counters`);
 };
 
   return (
@@ -135,6 +157,30 @@ await API.put(
             <div className="card-header fw-bold">{isEditMode ? "Edit Counter" : "Add Counter"}</div>
             <div className="card-body">
               <form onSubmit={submitHandler} className="max-w-md">
+              
+              <div className="mb-3">
+            <label className="form-label">School Name:</label>
+        <select
+          className="form-control"
+          value={form.schoolId}
+          onChange={(e) => {
+            const selectedSchool = schools.find((school) => school._id === e.target.value);
+
+            setForm({ ...form, 
+              schoolId: e.target.value,
+              schoolName: selectedSchool?.schoolName || ""
+            });
+          }}
+         >
+          <option value="">Select School</option>
+          {schools?.map((school) => (
+            <option key={school._id} value={school._id}>
+              {school.schoolName}
+            </option>
+          ))}
+        </select>
+        </div>
+
               <div className="mb-3">
                         <label className="form-label">Counter Name:</label>
               <input
@@ -186,30 +232,9 @@ await API.put(
             />
           </div>
       
-          <div className="mb-3">
-                        <label className="form-label">School Name:</label>
-        <select
-          className="form-control"
-          value={form.schoolId}
-          onChange={(e) => {
-            const selectedSchool = schools.find((school) => school._id === e.target.value);
+          
 
-            setForm({ ...form, 
-              schoolId: e.target.value,
-              schoolName: selectedSchool?.schoolName || ""
-            });
-          }}
-         >
-          <option value="">Select School</option>
-          {schools?.map((school) => (
-            <option key={school._id} value={school._id}>
-              {school.schoolName}
-            </option>
-          ))}
-        </select>
-        </div>
-
-        <button className="btn-primary">Save</button>
+        <button className="btn btn-primary">Save</button>
       </form>
       </div>
     </div>
