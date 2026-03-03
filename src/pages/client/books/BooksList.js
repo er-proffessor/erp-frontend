@@ -4,11 +4,19 @@ import { useOutletContext } from "react-router-dom";
 
 function BooksList() {
   const { branchId } = useParams();
-  const {books} = useOutletContext();
+  const {books, deleteBook} = useOutletContext();
 
   const navigate = useNavigate();
   
   console.log("Books from outlet:", books);
+
+  const handleDelete = async (id) => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this book?");
+  if (!confirmDelete) return;
+
+  await deleteBook(id);
+};
+
 
   return (
     <div className="container-fluid">
@@ -63,7 +71,10 @@ function BooksList() {
                       onClick={() => navigate(`/branches/${branchId}/books/edit/${book._id}`)}>
                         ✏️
                       </button>
-                      <button className="btn btn-sm btn-outline-danger">
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => handleDelete(book._id)}
+                      >
                         🗑️
                       </button>
                     </td>

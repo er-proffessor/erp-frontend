@@ -105,6 +105,27 @@ function DashboardLayout() {
   }
 };
 
+   // Delete School
+const deleteSchool = async (id) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await API.delete(`/api/schools/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // Remove from UI instantly
+    setSchools(prev => prev.filter(s => s._id !== id));
+
+  } catch (error) {
+    console.error("Delete School Error:", error.response?.data || error);
+    alert(error.response?.data?.message || "Failed to delete school");
+  }
+};
+
+
   // Get Books List
 
     const [books, setBooks] = useState([]);
@@ -141,6 +162,7 @@ function DashboardLayout() {
         fetchBooks();
 }, [fetchBooks, branchId, role]);
   
+  
   // Add New Book
 
   const addBooks = async (newBooks) => {
@@ -175,7 +197,7 @@ function DashboardLayout() {
     // };
 
 
-// Update Book
+  // Update Book
 const updateBook = async (id, updatedBook) => {
   if(role === "COUNTER") return;
 
@@ -204,7 +226,30 @@ const updateBook = async (id, updatedBook) => {
   }
 };
 
-  // fetch counter list
+  // Delete Book
+const deleteBook = async (id) => {
+  if (role === "COUNTER") return;
+
+  try {
+    const token = localStorage.getItem("token");
+
+    await API.delete(`/api/books/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // Remove from UI instantly
+    setBooks(prev => prev.filter(book => book._id !== id));
+
+  } catch (error) {
+    console.error("Delete Book Error:", error.response?.data || error);
+    alert(error.response?.data?.message || "Failed to delete book");
+  }
+};
+ 
+
+// fetch counter list
 
   const fetchCounters = useCallback(async () => {
   if (!branchId || role === "COUNTER") return;
@@ -351,8 +396,8 @@ const updateCounter = async (id, counterData) => {
         :
          (
          <div className="container-fluid px-4 py-3 bg-light" style={{ minHeight: "100vh" }}>
-            <Outlet context={{schools, addSchool, updateSchool, 
-              books, addBooks, updateBook, fetchBooks,
+            <Outlet context={{schools, addSchool, updateSchool, deleteSchool,
+              books, addBooks, updateBook, fetchBooks, deleteBook,
               counters, fetchCounters, addCounter, updateCounter, deleteCounter
               }} />         
           </div>

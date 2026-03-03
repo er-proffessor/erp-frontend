@@ -4,13 +4,24 @@ import { useOutletContext } from "react-router-dom";
 
 function SchoolsList() {
   const { branchId } = useParams();
-    const { schools = [] } = useOutletContext() || {};
+    const { schools = [], deleteSchool } = useOutletContext() || {};
 
     console.log(schools);
 
     const navigate = useNavigate();
 
-  return (
+  
+    // Delete School function
+
+    const handleDelete = async (id) => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this school?");
+  if (!confirmDelete) return;
+
+  await deleteSchool(id);
+};
+
+  
+return (
     <div className="container-fluid">
         <div className="card-header d-flex justify-content-between">
         <span className="fw-bold">Schools List</span>
@@ -63,7 +74,10 @@ function SchoolsList() {
                        onClick={()=>navigate(`/branches/${branchId}/schools/edit/${school._id}`)}>
                         ✏️
                       </button>
-                      <button className="btn btn-sm btn-outline-danger">
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => handleDelete(school._id)}
+                      >
                         🗑️
                       </button>
                     </td>
