@@ -92,6 +92,7 @@ const handleDelete = async (id) => {
             <th>#</th>
             <th>Counter Name</th>
             <th>Mobile Number</th>
+            <th>E-Mail</th>
             <th>School Name</th>
             <th>Total Books Assigned</th>
             <th>Status</th>
@@ -113,6 +114,7 @@ const handleDelete = async (id) => {
                 <td>{index + 1}</td>
                 <td>{counter.name}</td>
                 <td>{counter.mobileNo}</td>
+                <td>{counter.email}</td>
                 <td>{counter.schoolName || counter.schoolId?.schoolName || "-"}</td>
                 <td>{counter.totalBooksAssigned || 0}</td>
                 <td>{counter.status}</td>

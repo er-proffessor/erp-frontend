@@ -17,6 +17,9 @@ function SellBooks() {
     mobileNo: "",
     className: "",
     buyerType: "DIRECT",
+    billingStatus: "PAID",
+    paymentType: "Cash",
+    utrNo: "",
     books: []
   });
 
@@ -122,7 +125,10 @@ function SellBooks() {
           className: form.className,
           buyerType: form.buyerType,
           books: selectedBooks,
-          totalAmount
+          totalAmount,
+          billingStatus: form.billingStatus,
+          paymentType: form.paymentType,
+          utrNo: form.utrNo
         },
         {
           headers: {
@@ -305,7 +311,7 @@ function SellBooks() {
           />
         </div> */}
 
-        <div className="mt-3">
+          <div className="mt-3">
           <label>Buyer Type</label>
           <select
             name="buyerType"
@@ -317,7 +323,53 @@ function SellBooks() {
             <option value="SCHOOL">School</option>
           </select>
         </div>
+       
+        {/* Billing Status */}
+          <div className="mt-3">
+            <label>Billing Status</label>
+            <select
+              name="billingStatus"
+              value={form.billingStatus}
+              onChange={handleChange}
+              className="form-control"
+            >
+              <option value="PAID">Paid</option>
+              <option value="DUE">Due</option>
+            </select>
+          </div>
 
+          {/* Payment Type */}
+          <div className="mt-3">
+            <label>Payment Type</label>
+            <select
+              name="paymentType"
+              value={form.paymentType}
+              onChange={handleChange}
+              className="form-control"
+            >
+              <option value="Cash">Cash</option>
+              <option value="PhonePe">PhonePe</option>
+              <option value="GooglePay">Google Pay</option>
+              <option value="Paytm">Paytm</option>
+              <option value="NetBanking">Net Banking</option>
+            </select>
+          </div>
+
+          {/* UTR Number */}
+          {form.paymentType !== "Cash" && (
+          <div className="mt-3">
+            <label>UTR No.</label>
+            <input
+              type="text"
+              name="utrNo"
+              value={form.utrNo}
+              onChange={handleChange}
+              className="form-control"
+              placeholder="Enter UTR / Transaction Id"
+            />
+          </div>
+          )}
+          
         <button className="btn btn-success mt-3">
           Place Order
         </button>

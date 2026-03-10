@@ -16,6 +16,7 @@ function AddSchool() {
     const [schoolName, setSchoolName] = useState("");
     const [schoolAddress, setSchoolAddress] = useState("");
     const [schoolOwnerMobile, setSchoolOwnerMobile] = useState("");
+    const [email, setEmail] = useState("");
     const [schoolClasses, setSchoolClasses] = useState([]);
    
     const toggleClass = (cls) => {
@@ -47,6 +48,7 @@ function AddSchool() {
     schoolName,
     schoolAddress,
     schoolOwnerMobile,
+    email,
     schoolClasses: schoolClasses.sort((a,b)=>a.localeCompare(b))
   };
 
@@ -96,7 +98,15 @@ function AddSchool() {
                             required
                         />
                     </div>
-
+                    <div className="mb-3">
+                      <label className="form-label">E-Mail Id</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        /></div>
                     {/* CLASSES MULTI ADD */}
                     <div className="mb-3">
                         <label className="form-label">Classes</label>

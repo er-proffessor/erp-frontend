@@ -89,19 +89,32 @@ useEffect(() => {
 }, []);
 
   return (
-    <div className="sidebar"
-      style={{
-        width: "240px",
-        height: "100vh",
-        overflowY: "auto",
-        // background: "linear-gradient(to bottom, #f1b1d0, #dbb696)",
-        background: "#ffffff",
-        borderRight: "1px solid #e0e0e0",
-        boxShadow: "4px 0 10px rgba(130, 67, 67, 0.05)",
-        padding: "20px 10px",
-        transition: "all 0.3s ease"
-      }}
-    >
+    // <div className="sidebar"
+    //   style={{
+    //     width: "240px",
+    //     height: "100vh",
+    //     overflowY: "auto",
+    //     // background: "linear-gradient(to bottom, #f1b1d0, #dbb696)",
+    //     background: "#ffffff",
+    //     borderRight: "1px solid #e0e0e0",
+    //     boxShadow: "4px 0 10px rgba(130, 67, 67, 0.05)",
+    //     padding: "20px 10px",
+    //     transition: "all 0.3s ease"
+    //   }}
+    // >
+
+    <div
+  className="sidebar"
+  style={{
+    width: "210px",
+    height: "100vh",
+    overflowY: "auto",
+    background: "#ffffff",
+    borderRight: "1px solid #e6e6e6",
+    boxShadow: "2px 0 8px rgba(0,0,0,0.05)",
+    padding: "18px 14px",
+  }}
+>
       {/* <h4 style={{ fontWeight: "700", marginBottom: "20px", color: "#2e7d32" }}> */}
       
       
@@ -135,14 +148,25 @@ useEffect(() => {
     </div>
 
     {/* ARROW */}
-    <FaChevronDown
+    {/* <FaChevronDown
       style={{
         fontSize: "12px",
         color: "#888",
         transition: "0.3s",
-        transform: showProfileMenu ? "rotate(180deg)" : "rotate(0deg)"
+        transform: showProfileMenu ? "rotate(180deg)" : "rotate(0deg)",
+       minWidth: "18px"
       }}
-    />
+    /> */}
+
+      <FaChevronDown
+  style={{
+    fontSize: "12px",
+    color: "#999",
+    marginLeft: "auto",
+    transition: "0.3s",
+    transform: showProfileMenu ? "rotate(180deg)" : "rotate(0deg)"
+  }}
+/>
   </div>
 
   {/* DROPDOWN */}
@@ -180,22 +204,33 @@ useEffect(() => {
             to={`/branches/${branchId}`}
             style={navStyle}
           >
-            <FaHome /> Dashboard
+            <FaHome style={iconStyle}/> Dashboard
           </NavLink>
         </li>
 
         {/* SCHOOL */}
         <li className="nav-item mb-2">
-          <div onClick={toggleSchool}  className="menu-hover" style={menuStyle}>
-            <FaSchool /> School {school ? <FaChevronUp /> : <FaChevronDown />}
-          </div>
+          {/* <div onClick={toggleSchool}  className="menu-hover" style={menuStyle}>
+            <FaSchool style={{ minWidth: "18px" }} /> School {school ? <FaChevronUp /> : <FaChevronDown />}
+          </div> */}
+
+            <div onClick={toggleSchool} className="menu-hover" style={menuStyle}>
+  
+  <div style={menuLeft}>
+    <FaSchool style={iconStyle} />
+    <span>School</span>
+  </div>
+
+  {school ? <FaChevronUp style={arrowStyle} /> : <FaChevronDown style={arrowStyle} />}
+
+</div>
 
           <div style={dropdownStyle(school)}>
             <NavLink to={`/branches/${branchId}/schools`} style={subNavStyle}>
-              <FaList />School List
+              <FaList style={iconStyle}/>School List
             </NavLink>
             <NavLink to={`/branches/${branchId}/schools/add`} style={subNavStyle}>
-              <FaPlusCircle />Add School
+              <FaPlusCircle style={iconStyle}/>Add School
             </NavLink>
           </div>
         </li>
@@ -203,15 +238,19 @@ useEffect(() => {
         {/* BOOKS */}
         <li className="nav-item mb-2">
           <div onClick={toggleBooks}  className="menu-hover" style={menuStyle}>
-            <FaBook /> Books {books ? <FaChevronUp /> : <FaChevronDown />}
-          </div>
+            <div style={menuLeft}>
+            <FaBook style={iconStyle}/> 
+            <span>Books</span>
+            </div> 
+            {books ? <FaChevronUp style={arrowStyle}/> : <FaChevronDown style={arrowStyle}/>}
+</div>
 
           <div style={dropdownStyle(books)}>
             <NavLink to={`/branches/${branchId}/books`} style={subNavStyle}>
-              <FaList />Books List
+              <FaList style={iconStyle}/>Books List
             </NavLink>
             <NavLink to={`/branches/${branchId}/books/add`} style={subNavStyle}>
-              <FaPlusCircle />Add Books
+              <FaPlusCircle style={iconStyle}/>Add Books
             </NavLink>
           </div>
         </li>
@@ -219,18 +258,22 @@ useEffect(() => {
         {/* COUNTERS */}
         <li className="nav-item mb-2">
           <div onClick={toggleCounter}  className="menu-hover"style={menuStyle}>
-            <FaUsers /> Counters {counter ? <FaChevronUp /> : <FaChevronDown />}
+           <div style={menuLeft}>
+            <FaUsers style={iconStyle}/> 
+            <span>Counters </span>
+            </div>
+            {counter ? <FaChevronUp style={arrowStyle}/> : <FaChevronDown style={arrowStyle}/>}
           </div>
 
           <div style={dropdownStyle(counter)}>
             <NavLink to={`/branches/${branchId}/counters`} style={subNavStyle}>
-              <FaList />Counters List
+              <FaList style={iconStyle}/>Counters List
             </NavLink>
             <NavLink to={`/branches/${branchId}/counters/add`} style={subNavStyle}>
-              <FaPlusCircle />Add Counter
+              <FaPlusCircle style={iconStyle} />Add Counter
             </NavLink>
             <NavLink to={`/branches/${branchId}/counter-stock/assign`} style={subNavStyle}>
-              <FaBoxes />Assign Books
+              <FaBoxes style={iconStyle}/>Assign Books
             </NavLink>
           </div>
         </li>
@@ -249,58 +292,99 @@ useEffect(() => {
   );
 }
 
+// const navStyle = ({ isActive }) => ({
+//   display: "flex",
+//   alignItems: "center",
+//   gap: "12px",
+//   paddingTop: "0px",
+//   padding: "8px 18px",
+//   borderRadius: "6px",
+//   textDecoration: "none",
+//   color: isActive ? "#00bcd4" : "#555",
+//   // background: isActive ? "rgba(76, 175, 80, 0.12)" : "transparent",
+//   // borderLeft: isActive ? "4px solid #4CAF50" : "4px solid transparent",
+//   // boxShadow: isActive ? "0 4px 12px rgba(76,175,80,0.2)" : "none",
+//   background: "transparent",
+//   borderLeft: "none",
+//   boxShadow: "none",
+//   fontWeight: isActive ? "600" : "500",
+//   fontSize: isActive ? "20px" : "19px",
+//   transition: "all 0.2s ease"
+// });
+
 const navStyle = ({ isActive }) => ({
   display: "flex",
   alignItems: "center",
   gap: "12px",
-  paddingTop: "0px",
-  padding: "8px 18px",
-  borderRadius: "6px",
+  padding: "10px 14px",
+  borderRadius: "8px",
   textDecoration: "none",
-  color: isActive ? "#00bcd4" : "#555",
-  // background: isActive ? "rgba(76, 175, 80, 0.12)" : "transparent",
-  // borderLeft: isActive ? "4px solid #4CAF50" : "4px solid transparent",
-  // boxShadow: isActive ? "0 4px 12px rgba(76,175,80,0.2)" : "none",
-  background: "transparent",
-  borderLeft: "none",
-  boxShadow: "none",
+  color: isActive ? "#00bcd4" : "#444",
+  background: isActive ? "#f3fcfe" : "transparent",
   fontWeight: isActive ? "600" : "500",
-  fontSize: isActive ? "20px" : "19px",
-  transition: "all 0.2s ease"
+  fontSize: "15px",
+  transition: "0.2s",
 });
+
+// const menuStyle = {
+//   display: "flex",
+//   justifyContent: "space-between",
+//   alignItems: "center",
+//   padding: "10px 22px",
+//   cursor: "pointer",
+//   borderRadius: "6px",
+//    fontSize: "16px",   // 🔥 change here anytime
+//   fontWeight: "500",
+//   color: "#555",
+//   transition: "all 0.2s ease",
+// };
 
 const menuStyle = {
   display: "flex",
-  justifyContent: "space-between",
   alignItems: "center",
-  padding: "10px 22px",
+  justifyContent: "space-between",
+  padding: "9px 12px",
+  borderRadius: "8px",
   cursor: "pointer",
-  borderRadius: "6px",
-   fontSize: "16px",   // 🔥 change here anytime
+  fontSize: "15px",
   fontWeight: "500",
-  color: "#555",
-  transition: "all 0.2s ease",
+  color: "#444",
+  transition: "0.2s",
 };
+
+// const subNavStyle = ({ isActive }) => ({
+//   display: "flex",
+//   alignItems: "center",
+//   gap: "10px", 
+//   paddingLeft: "45px",
+//   // paddingRight: "0px",
+//   paddingTop: "6px",
+//   paddingBottom: "6px",
+//   marginTop: "4px",
+//   borderRadius: "6px",
+//   textDecoration: "none",
+//   color: isActive ? "#00bcd4" : "#777",
+//   // background: isActive ? "#e8f5e9" : "transparent",
+//   // borderLeft: isActive ? "3px solid #4CAF50" : "3px solid transparent",
+//   background: "transparent",
+//   borderLeft: "none",
+//   fontWeight: isActive ? "bold" : "500",
+//   fontSize: isActive ? "16px" : "15px",
+//   transition: "all 0.2s ease"
+// });
 
 const subNavStyle = ({ isActive }) => ({
   display: "flex",
   alignItems: "center",
-  gap: "10px", 
-  paddingLeft: "45px",
-  // paddingRight: "0px",
-  paddingTop: "6px",
-  paddingBottom: "6px",
+  gap: "10px",
+  padding: "7px 14px 7px 42px",
   marginTop: "4px",
   borderRadius: "6px",
   textDecoration: "none",
-  color: isActive ? "#00bcd4" : "#777",
-  // background: isActive ? "#e8f5e9" : "transparent",
-  // borderLeft: isActive ? "3px solid #4CAF50" : "3px solid transparent",
-  background: "transparent",
-  borderLeft: "none",
-  fontWeight: isActive ? "bold" : "500",
-  fontSize: isActive ? "16px" : "15px",
-  transition: "all 0.2s ease"
+  color: isActive ? "#00bcd4" : "#666",
+  fontWeight: isActive ? "600" : "500",
+  fontSize: "14px",
+  transition: "0.2s",
 });
 
 const dropdownStyle = (open) => ({
@@ -317,12 +401,23 @@ const dropdownStyle = (open) => ({
 //   letterSpacing: "0.5px"
 // };
 
+// const profileContainer = {
+//   display: "flex",
+//   alignItems: "center",
+//   gap: "10px",
+//   marginBottom: "20px",
+//   paddingBottom: "15px",
+// };
+
 const profileContainer = {
   display: "flex",
   alignItems: "center",
   gap: "10px",
-  marginBottom: "20px",
-  paddingBottom: "15px",
+  padding: "8px",
+  borderRadius: "8px",
+  cursor: "pointer",
+  marginBottom: "18px",
+  transition: "0.2s"
 };
 
 const profileImage = {
@@ -343,13 +438,23 @@ const userNameText = {
   color: "#333"
 };
 
+// const erpTitle = {
+//   fontSize: "22px",
+//   fontWeight: "600",
+//   color: "#00bcd4",
+//   marginBottom: "15px",
+//   marginTop: "2px",
+//    borderBottom: "1px solid #eee"
+// };
+
 const erpTitle = {
-  fontSize: "22px",
-  fontWeight: "600",
+  fontSize: "20px",
+  fontWeight: "700",
   color: "#00bcd4",
-  marginBottom: "15px",
-  marginTop: "2px",
-   borderBottom: "1px solid #eee"
+  marginBottom: "18px",
+  paddingBottom: "10px",
+  borderBottom: "1px solid #eee",
+  letterSpacing: "0.3px"
 };
 
 const profileWrapper = {
@@ -377,6 +482,22 @@ const dropdownItem = {
   cursor: "pointer",
   fontSize: "14px",
   transition: "0.2s"
+};
+
+const iconStyle = {
+  fontSize: "16px",
+  marginRight: "6px",
+};
+
+const arrowStyle = {
+  fontSize: "12px",
+  color: "#888",
+};
+
+const menuLeft = {
+  display: "flex",
+  alignItems: "center",
+  gap: "6px"
 };
 
 export default Sidebar;

@@ -42,6 +42,7 @@ return (
                 <th>School Name</th>
                 <th>Address</th>
                 <th>Owner Mobile</th>
+                <th>E-Mail</th>
                 <th>Classes</th>
                 <th>Action</th>
               </tr>
@@ -61,6 +62,7 @@ return (
                     <td>{school.schoolName}</td>
                     <td>{school.schoolAddress}</td>
                     <td>{school.schoolOwnerMobile}</td>
+                    <td>{school.email}</td>
                     {/* <td>
                       {school.classes.map((cls, i) => (
                         <span key={i} className="badge bg-secondary me-1">
