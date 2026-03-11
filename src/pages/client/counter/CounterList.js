@@ -1,9 +1,13 @@
 
 import { useOutletContext } from "react-router-dom";
 import { useParams, useNavigate, NavLink } from "react-router-dom";
+import usePageTitle from "../../../hooks/usePageTitle";
 
 
 function CounterList() {
+
+  usePageTitle("Counter List");
+
   // const [counters, setCounters] = useState([]);
   const { branchId } = useParams();
   const navigate = useNavigate();

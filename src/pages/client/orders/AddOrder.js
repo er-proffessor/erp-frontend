@@ -1,8 +1,12 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../../config/api";
+import usePageTitle from "../../../hooks/usePageTitle";
 
 function SellBooks() {
+
+  usePageTitle("Add Order");
+
   const counterId = localStorage.getItem("counterId");
    const branchId = localStorage.getItem("branchId");
    const token = localStorage.getItem("token");

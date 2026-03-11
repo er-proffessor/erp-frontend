@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import API from "../../config/api";
 import { FaSchool, FaBook, FaUserTie, FaTasks } from "react-icons/fa";
+import usePageTitle from "../../hooks/usePageTitle";
 
 const dashboardCardStyle = {
   padding: "20px",
@@ -24,6 +25,9 @@ const chartCardStyle = {
 };
 
 function Dashboard() {
+
+  usePageTitle("Dashboard");
+
   const { branchId } = useParams();
   const [branch, setBranch] = useState({});
 
@@ -53,6 +57,7 @@ function Dashboard() {
   }, [branchId, fetchBranchDetails]);
 
   return (
+    
     <div className="dashboard-page">
       <div className="mb-4">
         <h5 className="fw-bold" style={{letterSpacing:"0.5px"}}>{branch.branchName

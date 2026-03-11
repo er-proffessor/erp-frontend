@@ -1,8 +1,12 @@
 import { NavLink, useParams, useNavigate } from "react-router-dom";
 // import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import usePageTitle from "../../../hooks/usePageTitle";
 
 function BooksList() {
+
+  usePageTitle("Book List");
+
   const { branchId } = useParams();
   const {books, deleteBook} = useOutletContext();
 

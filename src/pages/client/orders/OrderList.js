@@ -2,8 +2,12 @@ import { useEffect, useState, useCallback } from "react";
 // import { useParams } from "react-router-dom";
 import API from "../../../config/api";
 import { FaDownload } from "react-icons/fa";
+import usePageTitle from "../../../hooks/usePageTitle";
 
 function OrderList() {
+
+  usePageTitle("Order List");
+
   const counterId = localStorage.getItem("counterId");
 
   const [orders, setOrders] = useState([]);
@@ -26,6 +30,25 @@ function OrderList() {
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
+
+
+const updatePaymentStatus = async (orderId, status) => {
+  try {
+    await API.put(
+      `/api/orders/update-payment/${orderId}`,
+      { billingStatus: status },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      }
+    );
+
+    fetchOrders(); // refresh list
+  } catch (err) {
+    console.error("Payment update failed", err);
+  }
+};
 
   const downloadInvoice = async (orderId) => {
     try {
@@ -62,8 +85,9 @@ function OrderList() {
             <th>Student</th>
             <th>Class</th>
             <th>Total Qty</th>
-            <th>Price</th> {/* you can remove this */}
             <th>Grand Total</th>
+            <th>Payment Type</th>
+            <th>Payment Status</th>
             <th>Date</th>
             <th>Invoice</th>
           </tr>
@@ -91,37 +115,53 @@ function OrderList() {
 
               return (
                 <tr key={order._id}>
-                  <td>{bookNames}</td>
-                  <td>{order.studentName || "-"}</td>
-                  <td>{order.className || "-"}</td>
+  <td>{bookNames}</td>
+  <td>{order.studentName || "-"}</td>
+  <td>{order.className || "-"}</td>
 
-                  {/* Total Quantity of all books */}
-                  <td>
-                    {order.books.reduce(
-                      (sum, item) => sum + item.quantity,
-                      0
-                    )}
-                  </td>
+  <td>
+    {order.books.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    )}
+  </td>
 
-                  {/* Optional: remove this column if not needed */}
-                  <td>-</td>
+  <td>₹ {grandTotal}</td>
 
-                  <td>₹ {grandTotal}</td>
+  {/* Payment Type */}
+  <td>{order.paymentType || "-"}</td>
 
-                  <td>
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </td>
+  {/* Payment Status */}
+  <td>
+    {order.billingStatus === "PAID" ? (
+      <span className="badge bg-success">PAID</span>
+    ) : (
+      <select
+        className="form-select form-select-sm"
+        value={order.billingStatus}
+        onChange={(e) =>
+          updatePaymentStatus(order._id, e.target.value)
+        }
+      >
+        <option value="DUE"><span className="badge bg-warning">DUE</span></option>
+        <option value="PAID"><span className="badge bg-success">PAID</span></option>
+      </select>
+    )}
+  </td>
 
-                  <td>
-                    <button
-                      className="btn btn-sm btn-light"
-                      onClick={() => downloadInvoice(order._id)}
-                      title="Download Invoice"
-                    >
-                      <FaDownload className="text-primary" />
-                    </button>
-                  </td>
-                </tr>
+  <td>
+    {new Date(order.createdAt).toLocaleDateString()}
+  </td>
+
+  <td>
+    <button
+      className="btn btn-sm btn-light"
+      onClick={() => downloadInvoice(order._id)}
+    >
+      <FaDownload className="text-primary" />
+    </button>
+  </td>
+</tr>
               );
             })
           )}

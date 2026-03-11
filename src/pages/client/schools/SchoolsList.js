@@ -1,8 +1,11 @@
 import {Link, useParams, useNavigate } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
-
+import usePageTitle from "../../../hooks/usePageTitle";
 
 function SchoolsList() {
+
+  usePageTitle("School List");
+
   const { branchId } = useParams();
     const { schools = [], deleteSchool } = useOutletContext() || {};
 

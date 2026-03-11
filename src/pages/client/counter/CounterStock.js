@@ -2,8 +2,12 @@ import { useEffect, useState, useCallback } from "react";
 // import axios from "axios";
 import { useParams } from "react-router-dom";
 import API from "../../../config/api";
+import usePageTitle from "../../../hooks/usePageTitle";
 
 function CounterStock() {
+
+  usePageTitle("Counter-Stock");
+
   const { counterId } = useParams();
   const [stock, setStock] = useState([]);
 

@@ -2,8 +2,12 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../../../config/api";
 import { useOutletContext } from "react-router-dom";
+import usePageTitle from "../../../hooks/usePageTitle";
 
 function AssignStock() {
+
+  usePageTitle("Assign Stock");
+
   const { branchId } = useParams();
 
   // const [counters, setCounters] = useState([]);

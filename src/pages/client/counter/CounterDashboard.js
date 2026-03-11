@@ -1,8 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../../config/api";
+import usePageTitle from "../../../hooks/usePageTitle";
 
 function CounterDashboard() {
+
+  usePageTitle("Counter-Dashboard");
 
   const [stock, setStock] = useState([]);
   const navigate = useNavigate();

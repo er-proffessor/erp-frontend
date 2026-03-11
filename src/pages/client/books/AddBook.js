@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
-
+import usePageTitle from "../../../hooks/usePageTitle";
 
 function AddBook() {
+
+    usePageTitle("Add Book");
+
     const { branchId, id } = useParams();
     const isEditMode = Boolean(id);
     const navigate = useNavigate();

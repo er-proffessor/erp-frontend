@@ -2,8 +2,12 @@ import { useEffect, useState, useCallback } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../../../config/api";
+import usePageTitle from "../../../hooks/usePageTitle";
 
 function AddCounter() {
+
+  usePageTitle("Add Counter");
+
   // const [schools, setSchools] = useState([]);
   const { addCounter, updateCounter, schools } = useOutletContext();
  
@@ -14,6 +18,11 @@ function AddCounter() {
   mobileNo: "",
   email: "",
   password: ""
+});
+
+const [error, setError] = useState({
+  mobileNo: "",
+  email: ""
 });
 
   const { branchId, id } = useParams();
@@ -134,6 +143,24 @@ function AddCounter() {
 const submitHandler = async (e) => {
   e.preventDefault();
 
+  if (form.mobileNo.length !== 10) {
+    setError((prev) => ({
+      ...prev,
+      mobileNo: "Mobile number must be exactly 10 digits"
+    }));
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(form.email)) {
+    setError((prev) => ({
+      ...prev,
+      email: "Invalid email format"
+    }));
+    return;
+  }
+
   let result;
 
   if (isEditMode) {
@@ -196,13 +223,26 @@ const submitHandler = async (e) => {
         <div className="mb-3">
           <label className="form-label">Mobile No. :</label>
           <input
+          type="text"
           className="form-control"
           placeholder="Counter Mobile No."
           value={form.mobileNo}
+          maxLength="10"
           onChange={(e) =>
-            setForm({ ...form, mobileNo: e.target.value })
-          }
+            {const value = e.target.value.replace(/\D/g, "");
+            setForm({ ...form, mobileNo: value });
+            
+            if (value.length !== 10 ){
+              setError({...error, mobileNo: "Mobile Number must be 10 digit only"});
+            }
+            else {
+              setError({...error, mobileNo: ""});
+            }
+          }}
          required />
+         {error.mobileNo && (
+          <small className="text-danger">{error.mobileNo}</small>
+         )}
         </div>
 
           <div className="mb-3">
@@ -212,11 +252,25 @@ const submitHandler = async (e) => {
               className="form-control"
               placeholder="Enter Counter Login Email"
               value={form.email}
-              onChange={(e) =>
-                setForm({ ...form, email: e.target.value })
-              }
+              onChange={(e) =>{
+                  const value = e.target.value;
+        
+                setForm({ ...form, email: value });
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if(!emailRegex.test(value)){
+                  setError({...error, email: "Invalid E-Mail format"});
+                }
+                else {
+                  setError({...error, email: ""});
+                }
+
+              }}
               required
             />
+            {error.email && (
+              <small className="text-danger">{error.email}</small>
+            )}
           </div>
 
           <div className="mb-3">
@@ -234,7 +288,13 @@ const submitHandler = async (e) => {
       
           
 
-        <button className="btn btn-primary">Save</button>
+        <button 
+          className="btn btn-primary"
+          disabled={error.mobileNo || error.email}
+          >
+            Save
+        </button>
+
       </form>
       </div>
     </div>
