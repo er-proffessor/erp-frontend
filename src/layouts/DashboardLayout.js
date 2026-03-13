@@ -4,7 +4,7 @@ import { Outlet, useParams } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 // import axios from "axios";
 import API from "../config/api";
-import CounterSidebar from "./CounterSidebar";
+// import CounterSidebar from "./CounterSidebar";
 
 function DashboardLayout() {
   
@@ -382,11 +382,11 @@ const updateCounter = async (id, counterData) => {
   return (
     <>
     <div className="d-flex">
-      {/* <Sidebar /> */}
+      <Sidebar />
 
       {/* {role !== "COUNTER" && <Sidebar />} */}
 
-      {role === "COUNTER" ? <CounterSidebar /> : <Sidebar />}
+      {/* {role === "COUNTER" ? <CounterSidebar /> : <Sidebar />} */}
 
       <div className="flex-grow-1">
         <Header />

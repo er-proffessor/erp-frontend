@@ -18,6 +18,9 @@ import {
 function Sidebar() {
   const { branchId } = useParams();
 
+  const role = localStorage.getItem("role");
+  const counterId = localStorage.getItem("counterId");
+
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [school, setSchool] = useState(false);
   const [books, setBooks] = useState(false);
@@ -71,8 +74,8 @@ const profileRef = useRef(null);
   }, [branchId]);
 
   useEffect(() => {
-    if (branchId) fetchBranchDetails();
-  }, [branchId, fetchBranchDetails]);
+    if (branchId && role !== "COUNTER") fetchBranchDetails();
+  }, [branchId, fetchBranchDetails, role]);
 
 useEffect(() => {
   function handleClickOutside(event) {
@@ -89,41 +92,23 @@ useEffect(() => {
 }, []);
 
   return (
-    // <div className="sidebar"
-    //   style={{
-    //     width: "240px",
-    //     height: "100vh",
-    //     overflowY: "auto",
-    //     // background: "linear-gradient(to bottom, #f1b1d0, #dbb696)",
-    //     background: "#ffffff",
-    //     borderRight: "1px solid #e0e0e0",
-    //     boxShadow: "4px 0 10px rgba(130, 67, 67, 0.05)",
-    //     padding: "20px 10px",
-    //     transition: "all 0.3s ease"
-    //   }}
-    // >
 
-    <div
-  className="sidebar"
-  style={{
-    width: "210px",
-    height: "100vh",
-    overflowY: "auto",
-    background: "#ffffff",
-    borderRight: "1px solid #e6e6e6",
-    boxShadow: "2px 0 8px rgba(0,0,0,0.05)",
-    padding: "18px 14px",
-  }}
->
-      {/* <h4 style={{ fontWeight: "700", marginBottom: "20px", color: "#2e7d32" }}> */}
+            <div className="sidebar"
+            style={{
+            width: "210px",
+            height: "100vh",
+            overflowY: "auto",
+            background: "#ffffff",
+            borderRight: "1px solid #e6e6e6",
+            boxShadow: "2px 0 8px rgba(0,0,0,0.05)",
+            padding: "18px 14px",
+          }}
+        >
+
       
-      
+      {/* ERP NAME/Title */}
 
-      {/* ERP NAME */}
-
-      <div style={erpTitle}>
-        Publication ERP Software
-      </div>
+      <div style={erpTitle}> Publication ERP Software </div>
 
 
       {/* PROFILE SECTION */}
@@ -141,36 +126,27 @@ useEffect(() => {
     />
 
     <div style={{ flex: 1 }}>
-      <div style={welcomeText}>Welcome,</div>
-      <div style={userNameText}>
-        {branch.branchName ? branch.branchName : "User"}
-      </div>
+        <div style={welcomeText}>Welcome,</div>
+          <div style={userNameText}>
+            {/* {branch.branchName ? branch.branchName : "User"} */}
+            {role === "COUNTER"? "Counter User" : branch.branchName || "User"}
+          </div>
     </div>
 
     {/* ARROW */}
-    {/* <FaChevronDown
+      <FaChevronDown
       style={{
         fontSize: "12px",
-        color: "#888",
+        color: "#999",
+        marginLeft: "auto",
         transition: "0.3s",
-        transform: showProfileMenu ? "rotate(180deg)" : "rotate(0deg)",
-       minWidth: "18px"
+        transform: showProfileMenu ? "rotate(180deg)" : "rotate(0deg)"
       }}
-    /> */}
-
-      <FaChevronDown
-  style={{
-    fontSize: "12px",
-    color: "#999",
-    marginLeft: "auto",
-    transition: "0.3s",
-    transform: showProfileMenu ? "rotate(180deg)" : "rotate(0deg)"
-  }}
-/>
+    />
   </div>
 
   {/* DROPDOWN */}
-  {showProfileMenu && (
+  {/* {showProfileMenu && (
     <div
   style={{
     ...profileDropdown,
@@ -189,7 +165,16 @@ useEffect(() => {
     </div>
   )}
 
-</div>
+</div> */}
+
+{showProfileMenu && (
+          <div style={profileDropdown}>
+            <div style={dropdownItem} onClick={handleLogout}>
+              Logout
+            </div>
+          </div>
+        )}
+      </div>
 
       
       {/* <h3 style={titleStyle}>
@@ -201,13 +186,17 @@ useEffect(() => {
         {/* DASHBOARD */}
         <li className="nav-item mb-2">
           <NavLink
-            to={`/branches/${branchId}`}
+            to={role === "COUNTER"
+                ? `/branches/${branchId}/counter-dashboard`
+                :`/branches/${branchId}`}
             style={navStyle}
           >
             <FaHome style={iconStyle}/> Dashboard
           </NavLink>
         </li>
 
+        {role !== "COUNTER" && (
+        <>
         {/* SCHOOL */}
         <li className="nav-item mb-2">
           {/* <div onClick={toggleSchool}  className="menu-hover" style={menuStyle}>
@@ -277,7 +266,7 @@ useEffect(() => {
             </NavLink>
           </div>
         </li>
-
+            
         {/* INVENTORY
         <li className="nav-item mt-2">
           <div  className="menu-hover"style={menuStyle}>
@@ -286,31 +275,37 @@ useEffect(() => {
           </NavLink>
           </div>
         </li> */}
+       </>
+        )}
+
+                {/* COUNTER MENU */}
+                {role === "COUNTER" && (
+                  <>
+                    <li className="nav-item mb-2">
+                      <NavLink
+                        to={`/branches/${branchId}/counter/${counterId}/sell`}
+                        style={navStyle}
+                      >
+                        <FaBook style={iconStyle} /> Sell Book
+                      </NavLink>
+                    </li>
+
+                    <li className="nav-item mb-2">
+                      <NavLink
+                        to={`/branches/${branchId}/counter/${counterId}/orders`}
+                        style={navStyle}
+                      >
+                        <FaList style={iconStyle} /> Order History
+                      </NavLink>
+                    </li>
+                  </>
+                )}
 
       </ul>
     </div>
   );
 }
 
-// const navStyle = ({ isActive }) => ({
-//   display: "flex",
-//   alignItems: "center",
-//   gap: "12px",
-//   paddingTop: "0px",
-//   padding: "8px 18px",
-//   borderRadius: "6px",
-//   textDecoration: "none",
-//   color: isActive ? "#00bcd4" : "#555",
-//   // background: isActive ? "rgba(76, 175, 80, 0.12)" : "transparent",
-//   // borderLeft: isActive ? "4px solid #4CAF50" : "4px solid transparent",
-//   // boxShadow: isActive ? "0 4px 12px rgba(76,175,80,0.2)" : "none",
-//   background: "transparent",
-//   borderLeft: "none",
-//   boxShadow: "none",
-//   fontWeight: isActive ? "600" : "500",
-//   fontSize: isActive ? "20px" : "19px",
-//   transition: "all 0.2s ease"
-// });
 
 const navStyle = ({ isActive }) => ({
   display: "flex",
@@ -326,18 +321,6 @@ const navStyle = ({ isActive }) => ({
   transition: "0.2s",
 });
 
-// const menuStyle = {
-//   display: "flex",
-//   justifyContent: "space-between",
-//   alignItems: "center",
-//   padding: "10px 22px",
-//   cursor: "pointer",
-//   borderRadius: "6px",
-//    fontSize: "16px",   // 🔥 change here anytime
-//   fontWeight: "500",
-//   color: "#555",
-//   transition: "all 0.2s ease",
-// };
 
 const menuStyle = {
   display: "flex",
@@ -352,26 +335,6 @@ const menuStyle = {
   transition: "0.2s",
 };
 
-// const subNavStyle = ({ isActive }) => ({
-//   display: "flex",
-//   alignItems: "center",
-//   gap: "10px", 
-//   paddingLeft: "45px",
-//   // paddingRight: "0px",
-//   paddingTop: "6px",
-//   paddingBottom: "6px",
-//   marginTop: "4px",
-//   borderRadius: "6px",
-//   textDecoration: "none",
-//   color: isActive ? "#00bcd4" : "#777",
-//   // background: isActive ? "#e8f5e9" : "transparent",
-//   // borderLeft: isActive ? "3px solid #4CAF50" : "3px solid transparent",
-//   background: "transparent",
-//   borderLeft: "none",
-//   fontWeight: isActive ? "bold" : "500",
-//   fontSize: isActive ? "16px" : "15px",
-//   transition: "all 0.2s ease"
-// });
 
 const subNavStyle = ({ isActive }) => ({
   display: "flex",
@@ -393,21 +356,21 @@ const dropdownStyle = (open) => ({
   transition: "all 0.3s ease"
 });
 
-// const titleStyle = {
-//   fontSize: "18px",
-//   fontWeight: "600",
-//   marginBottom: "25px",
-//    color: "#222",
-//   letterSpacing: "0.5px"
-// };
+const erpTitle = {
+  fontSize: "20px",
+  fontWeight: "700",
+  color: "#00bcd4",
+  marginBottom: "18px",
+  paddingBottom: "10px",
+  borderBottom: "1px solid #eee",
+  letterSpacing: "0.3px"
+};
 
-// const profileContainer = {
-//   display: "flex",
-//   alignItems: "center",
-//   gap: "10px",
-//   marginBottom: "20px",
-//   paddingBottom: "15px",
-// };
+const profileWrapper = {
+  position: "relative",
+};
+
+
 
 const profileContainer = {
   display: "flex",
@@ -424,7 +387,7 @@ const profileImage = {
   width: "40px",
   height: "40px",
   borderRadius: "50%",
-  objectFit: "cover"
+  objectFit: "cover" // not neccessary
 };
 
 const welcomeText = {
@@ -438,31 +401,7 @@ const userNameText = {
   color: "#333"
 };
 
-// const erpTitle = {
-//   fontSize: "22px",
-//   fontWeight: "600",
-//   color: "#00bcd4",
-//   marginBottom: "15px",
-//   marginTop: "2px",
-//    borderBottom: "1px solid #eee"
-// };
 
-const erpTitle = {
-  fontSize: "20px",
-  fontWeight: "700",
-  color: "#00bcd4",
-  marginBottom: "18px",
-  paddingBottom: "10px",
-  borderBottom: "1px solid #eee",
-  letterSpacing: "0.3px"
-};
-
-const profileWrapper = {
-  position: "relative",
-  // marginBottom: "5px",
-  // paddingBottom: "5px",
-  // borderBottom: "1px solid #eee"
-};
 
 const profileDropdown = {
   position: "absolute",
@@ -480,8 +419,8 @@ const profileDropdown = {
 const dropdownItem = {
   padding: "10px",
   cursor: "pointer",
-  fontSize: "14px",
-  transition: "0.2s"
+  fontSize: "14px", // not neccessary
+  transition: "0.2s" // not neccessary
 };
 
 const iconStyle = {
