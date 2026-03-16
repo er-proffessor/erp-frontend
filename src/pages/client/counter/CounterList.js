@@ -98,7 +98,7 @@ const handleDelete = async (id) => {
             <th>Mobile Number</th>
             <th>E-Mail</th>
             <th>School Name</th>
-            <th>Total Books Assigned</th>
+            <th>Available Stock</th>
             <th>Status</th>
             <th>Counter Dashboard</th>
             <th>Action</th>

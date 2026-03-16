@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../../config/api";
 import usePageTitle from "../../../hooks/usePageTitle";
+import { useOutletContext } from "react-router-dom";
 
 function SellBooks() {
 
@@ -27,7 +28,7 @@ function SellBooks() {
     books: []
   });
 
-    
+    const { fetchCounters } = useOutletContext();
 
   // Fetch Available Books
   const fetchAvailableBooks = useCallback(async () => {
@@ -152,7 +153,8 @@ function SellBooks() {
       // });
 
       
-      // fetchAvailableBooks(); // Refresh Counter stock
+      await fetchAvailableBooks(); // Refresh Counter stock
+      await fetchCounters(); 
 
       navigate(`/branches/${branchId}/counter-dashboard`);
       // navigate(`/branches/${branchId}/counter/${counterId}`);
