@@ -1,8 +1,7 @@
 import { NavLink, useParams, useNavigate } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
 import usePageTitle from "../../../hooks/usePageTitle";
-import Loader from "../../../components/Loader";
-import { useState } from "react";
+
 
 function BooksList() {
 
@@ -10,7 +9,7 @@ function BooksList() {
 
   const { branchId } = useParams();
   const {books, deleteBook} = useOutletContext();
-  const [loading, setLoading] = useState(true);
+  
 
   const navigate = useNavigate();
   
