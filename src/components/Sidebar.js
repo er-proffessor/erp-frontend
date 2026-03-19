@@ -146,26 +146,6 @@ useEffect(() => {
   </div>
 
   {/* DROPDOWN */}
-  {/* {showProfileMenu && (
-    <div
-  style={{
-    ...profileDropdown,
-    opacity: showProfileMenu ? 1 : 0,
-    transform: showProfileMenu ? "translateY(0px) scale(1)" : "translateY(-10px) scale(0.98)",
-    pointerEvents: showProfileMenu ? "auto" : "none"
-  }}
->
-      <div
-        style={dropdownItem}
-        className="dropdownItem"
-        onClick={handleLogout}
-      >
-        Logout
-      </div>
-    </div>
-  )}
-
-</div> */}
 
 {showProfileMenu && (
           <div style={profileDropdown}>

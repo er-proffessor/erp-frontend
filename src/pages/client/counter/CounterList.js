@@ -90,7 +90,7 @@ const handleDelete = async (id) => {
         </NavLink>
       </div>
       <div className="table-responsive">
-        <table className="table table-bordered table-hover mb-0">
+        <table className="table table-bordered table-sm table-hover mb-0">
         <thead>
           <tr>
             <th>#</th>

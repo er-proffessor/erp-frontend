@@ -1,7 +1,8 @@
 import { NavLink, useParams, useNavigate } from "react-router-dom";
-// import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import usePageTitle from "../../../hooks/usePageTitle";
+import Loader from "../../../components/Loader";
+import { useState } from "react";
 
 function BooksList() {
 
@@ -9,6 +10,7 @@ function BooksList() {
 
   const { branchId } = useParams();
   const {books, deleteBook} = useOutletContext();
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
   
@@ -35,7 +37,7 @@ function BooksList() {
       {/* Table */}
       <div className="card shadow-sm">
         <div className="card-body">
-          <table className="table table-bordered table-hover align-middle">
+          <table className="table table-bordered table-sm table-hover align-middle">
             <thead className="table-light">
               <tr>
                 <th>#</th>

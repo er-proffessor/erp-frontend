@@ -38,7 +38,7 @@ return (
       {/* Table */}
       <div className="card shadow-sm">
         <div className="card-body">
-          <table className="table table-bordered table-hover align-middle">
+          <table className="table table-bordered table-sm table-hover align-middle">
             <thead className="table-light">
               <tr>
                 <th>#</th>
