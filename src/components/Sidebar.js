@@ -10,9 +10,9 @@ import {
   FaBoxes,
   FaChevronDown,
   FaChevronUp,
-   FaPlusCircle,
+  FaPlusCircle,
   FaList,
-  
+
 } from "react-icons/fa";
 
 function Sidebar() {
@@ -26,36 +26,47 @@ function Sidebar() {
   const [books, setBooks] = useState(false);
   const [counter, setCounter] = useState(false);
   const [branch, setBranch] = useState({});
+  const [orders, setOrders] = useState(false);
   // const [inventory, setInventory] = useState(false);
 
-const profileRef = useRef(null);
+  const profileRef = useRef(null);
 
   const toggleSchool = () => {
     setSchool(!school);
     setBooks(false);
     setCounter(false);
+    setOrders(false);
   };
 
   const toggleBooks = () => {
     setBooks(!books);
     setSchool(false);
     setCounter(false);
+    setOrders(false);
   };
 
   const toggleCounter = () => {
     setCounter(!counter);
     setBooks(false);
     setSchool(false);
+    setOrders(false);
+  };
+
+  const toggleOrders = () => {
+    setOrders(!orders);
+    setBooks(false);
+    setSchool(false);
+    setCounter(false);
   };
 
   const handleLogout = () => {
-  localStorage.removeItem("isLoggedIn");
-  localStorage.removeItem("counterId");
-  localStorage.removeItem("branchId");
-  localStorage.removeItem("token");
-  localStorage.removeItem("role");
-  window.location.href = "/";
-};
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("counterId");
+    localStorage.removeItem("branchId");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    window.location.href = "/";
+  };
 
   const fetchBranchDetails = useCallback(async () => {
     try {
@@ -77,35 +88,35 @@ const profileRef = useRef(null);
     if (branchId && role !== "COUNTER") fetchBranchDetails();
   }, [branchId, fetchBranchDetails, role]);
 
-useEffect(() => {
-  function handleClickOutside(event) {
-    if (profileRef.current && !profileRef.current.contains(event.target)) {
-      setShowProfileMenu(false);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setShowProfileMenu(false);
+      }
     }
-  }
 
-  document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
 
-            <div className="sidebar"
-            style={{
-            width: "210px",
-            height: "100vh",
-            overflowY: "auto",
-            background: "#ffffff",
-            borderRight: "1px solid #e6e6e6",
-            boxShadow: "2px 0 8px rgba(0,0,0,0.05)",
-            padding: "18px 14px",
-          }}
-        >
+    <div className="sidebar"
+      style={{
+        width: "210px",
+        height: "100vh",
+        overflowY: "auto",
+        background: "#ffffff",
+        borderRight: "1px solid #e6e6e6",
+        boxShadow: "2px 0 8px rgba(0,0,0,0.05)",
+        padding: "18px 14px",
+      }}
+    >
 
-      
+
       {/* ERP NAME/Title */}
 
       <div style={erpTitle}> Publication ERP Software </div>
@@ -114,40 +125,40 @@ useEffect(() => {
       {/* PROFILE SECTION */}
 
       <div style={profileWrapper} ref={profileRef}>
-  
-  <div 
-    style={profileContainer} 
-    onClick={() => setShowProfileMenu(!showProfileMenu)}
-  >
-    <img
-      src="https://i.pravatar.cc/40"
-      alt="profile"
-      style={profileImage}
-    />
 
-    <div style={{ flex: 1 }}>
-        <div style={welcomeText}>Welcome,</div>
-          <div style={userNameText}>
-            {/* {branch.branchName ? branch.branchName : "User"} */}
-            {role === "COUNTER"? "Counter User" : branch.branchName || "User"}
+        <div
+          style={profileContainer}
+          onClick={() => setShowProfileMenu(!showProfileMenu)}
+        >
+          <img
+            src="https://i.pravatar.cc/40"
+            alt="profile"
+            style={profileImage}
+          />
+
+          <div style={{ flex: 1 }}>
+            <div style={welcomeText}>Welcome,</div>
+            <div style={userNameText}>
+              {/* {branch.branchName ? branch.branchName : "User"} */}
+              {role === "COUNTER" ? "Counter User" : branch.branchName || "User"}
+            </div>
           </div>
-    </div>
 
-    {/* ARROW */}
-      <FaChevronDown
-      style={{
-        fontSize: "12px",
-        color: "#999",
-        marginLeft: "auto",
-        transition: "0.3s",
-        transform: showProfileMenu ? "rotate(180deg)" : "rotate(0deg)"
-      }}
-    />
-  </div>
+          {/* ARROW */}
+          <FaChevronDown
+            style={{
+              fontSize: "12px",
+              color: "#999",
+              marginLeft: "auto",
+              transition: "0.3s",
+              transform: showProfileMenu ? "rotate(180deg)" : "rotate(0deg)"
+            }}
+          />
+        </div>
 
-  {/* DROPDOWN */}
+        {/* DROPDOWN */}
 
-{showProfileMenu && (
+        {showProfileMenu && (
           <div style={profileDropdown}>
             <div style={dropdownItem} onClick={handleLogout}>
               Logout
@@ -156,7 +167,7 @@ useEffect(() => {
         )}
       </div>
 
-      
+
       {/* <h3 style={titleStyle}>
         {branch.branchName ? `Welcome, ${branch.branchName}` : "Dashboard"}
       </h3> */}
@@ -167,87 +178,122 @@ useEffect(() => {
         <li className="nav-item mb-2">
           <NavLink
             to={role === "COUNTER"
-                ? `/branches/${branchId}/counter-dashboard`
-                :`/branches/${branchId}`}
+              ? `/branches/${branchId}/counter-dashboard`
+              : `/branches/${branchId}`}
             style={navStyle}
           >
-            <FaHome style={iconStyle}/> Dashboard
+            <FaHome style={iconStyle} /> Dashboard
           </NavLink>
         </li>
 
         {role !== "COUNTER" && (
-        <>
-        {/* SCHOOL */}
-        <li className="nav-item mb-2">
-          {/* <div onClick={toggleSchool}  className="menu-hover" style={menuStyle}>
+          <>
+            {/* SCHOOL */}
+            <li className="nav-item mb-2">
+              {/* <div onClick={toggleSchool}  className="menu-hover" style={menuStyle}>
             <FaSchool style={{ minWidth: "18px" }} /> School {school ? <FaChevronUp /> : <FaChevronDown />}
           </div> */}
 
-            <div onClick={toggleSchool} className="menu-hover" style={menuStyle}>
-  
-  <div style={menuLeft}>
-    <FaSchool style={iconStyle} />
-    <span>School</span>
-  </div>
+              <div onClick={toggleSchool} className="menu-hover" style={menuStyle}>
 
-  {school ? <FaChevronUp style={arrowStyle} /> : <FaChevronDown style={arrowStyle} />}
+                <div style={menuLeft}>
+                  <FaSchool style={iconStyle} />
+                  <span>School</span>
+                </div>
 
-</div>
+                {school ? <FaChevronUp style={arrowStyle} /> : <FaChevronDown style={arrowStyle} />}
 
-          <div style={dropdownStyle(school)}>
-            <NavLink to={`/branches/${branchId}/schools`} style={subNavStyle}>
-              <FaList style={iconStyle}/>School List
-            </NavLink>
-            <NavLink to={`/branches/${branchId}/schools/add`} style={subNavStyle}>
-              <FaPlusCircle style={iconStyle}/>Add School
-            </NavLink>
-          </div>
-        </li>
+              </div>
 
-        {/* BOOKS */}
-        <li className="nav-item mb-2">
-          <div onClick={toggleBooks}  className="menu-hover" style={menuStyle}>
-            <div style={menuLeft}>
-            <FaBook style={iconStyle}/> 
-            <span>Books</span>
-            </div> 
-            {books ? <FaChevronUp style={arrowStyle}/> : <FaChevronDown style={arrowStyle}/>}
-</div>
+              <div style={dropdownStyle(school)}>
+                <NavLink to={`/branches/${branchId}/schools`} style={subNavStyle}>
+                  <FaList style={iconStyle} />School List
+                </NavLink>
+                <NavLink to={`/branches/${branchId}/schools/add`} style={subNavStyle}>
+                  <FaPlusCircle style={iconStyle} />Add School
+                </NavLink>
+              </div>
+            </li>
 
-          <div style={dropdownStyle(books)}>
-            <NavLink to={`/branches/${branchId}/books`} style={subNavStyle}>
-              <FaList style={iconStyle}/>Books List
-            </NavLink>
-            <NavLink to={`/branches/${branchId}/books/add`} style={subNavStyle}>
-              <FaPlusCircle style={iconStyle}/>Add Books
-            </NavLink>
-          </div>
-        </li>
+            {/* BOOKS */}
+            <li className="nav-item mb-2">
+              <div onClick={toggleBooks} className="menu-hover" style={menuStyle}>
+                <div style={menuLeft}>
+                  <FaBook style={iconStyle} />
+                  <span>Books</span>
+                </div>
+                {books ? <FaChevronUp style={arrowStyle} /> : <FaChevronDown style={arrowStyle} />}
+              </div>
 
-        {/* COUNTERS */}
-        <li className="nav-item mb-2">
-          <div onClick={toggleCounter}  className="menu-hover"style={menuStyle}>
-           <div style={menuLeft}>
-            <FaUsers style={iconStyle}/> 
-            <span>Counters </span>
-            </div>
-            {counter ? <FaChevronUp style={arrowStyle}/> : <FaChevronDown style={arrowStyle}/>}
-          </div>
+              <div style={dropdownStyle(books)}>
+                <NavLink to={`/branches/${branchId}/books`} style={subNavStyle}>
+                  <FaList style={iconStyle} />Books List
+                </NavLink>
+                <NavLink to={`/branches/${branchId}/books/add`} style={subNavStyle}>
+                  <FaPlusCircle style={iconStyle} />Add Books
+                </NavLink>
+              </div>
+            </li>
 
-          <div style={dropdownStyle(counter)}>
-            <NavLink to={`/branches/${branchId}/counters`} style={subNavStyle}>
-              <FaList style={iconStyle}/>Counters List
-            </NavLink>
-            <NavLink to={`/branches/${branchId}/counters/add`} style={subNavStyle}>
-              <FaPlusCircle style={iconStyle} />Add Counter
-            </NavLink>
-            <NavLink to={`/branches/${branchId}/counter-stock/assign`} style={subNavStyle}>
-              <FaBoxes style={iconStyle}/>Assign Books
-            </NavLink>
-          </div>
-        </li>
-            
-        {/* INVENTORY
+            {/* COUNTERS */}
+            <li className="nav-item mb-2">
+              <div onClick={toggleCounter} className="menu-hover" style={menuStyle}>
+                <div style={menuLeft}>
+                  <FaUsers style={iconStyle} />
+                  <span>Counters </span>
+                </div>
+                {counter ? <FaChevronUp style={arrowStyle} /> : <FaChevronDown style={arrowStyle} />}
+              </div>
+
+              <div style={dropdownStyle(counter)}>
+                <NavLink to={`/branches/${branchId}/counters`} style={subNavStyle}>
+                  <FaList style={iconStyle} />Counters List
+                </NavLink>
+                <NavLink to={`/branches/${branchId}/counters/add`} style={subNavStyle}>
+                  <FaPlusCircle style={iconStyle} />Add Counter
+                </NavLink>
+                <NavLink to={`/branches/${branchId}/counter-stock/assign`} style={subNavStyle}>
+                  <FaBoxes style={iconStyle} />Assign Books
+                </NavLink>
+              </div>
+            </li>
+
+            {/* ORDERS */}
+                <li className="nav-item mb-2">
+                  <div onClick={toggleOrders} className="menu-hover" style={menuStyle}>
+                    <div style={menuLeft}>
+                      <FaBoxes style={iconStyle} />
+                      <span>Orders</span>
+                    </div>
+
+                    {orders ? (
+                      <FaChevronUp style={arrowStyle} />
+                    ) : (
+                      <FaChevronDown style={arrowStyle} />
+                    )}
+                  </div>
+
+                  <div style={dropdownStyle(orders)}>
+                    <NavLink
+                      to={`/branches/${branchId}/orders/create`}
+                      style={subNavStyle}
+                    >
+                      <FaPlusCircle style={iconStyle} />
+                      Create Order
+                    </NavLink>
+
+                    <NavLink
+                      to={`/branches/${branchId}/orders`}
+                      style={subNavStyle}
+                    >
+                      <FaList style={iconStyle} />
+                      Order History
+                    </NavLink>
+                  </div>
+                </li>
+
+
+            {/* INVENTORY
         <li className="nav-item mt-2">
           <div  className="menu-hover"style={menuStyle}>
           <NavLink to={`/branches/${branchId}/inventory`} style={navStyle}>
@@ -255,31 +301,31 @@ useEffect(() => {
           </NavLink>
           </div>
         </li> */}
-       </>
+          </>
         )}
 
-                {/* COUNTER MENU */}
-                {role === "COUNTER" && (
-                  <>
-                    <li className="nav-item mb-2">
-                      <NavLink
-                        to={`/branches/${branchId}/counter/${counterId}/sell`}
-                        style={navStyle}
-                      >
-                        <FaBook style={iconStyle} /> Sell Book
-                      </NavLink>
-                    </li>
+        {/* COUNTER MENU */}
+        {role === "COUNTER" && (
+          <>
+            <li className="nav-item mb-2">
+              <NavLink
+                to={`/branches/${branchId}/counter/${counterId}/sell`}
+                style={navStyle}
+              >
+                <FaBook style={iconStyle} /> Sell Book
+              </NavLink>
+            </li>
 
-                    <li className="nav-item mb-2">
-                      <NavLink
-                        to={`/branches/${branchId}/counter/${counterId}/orders`}
-                        style={navStyle}
-                      >
-                        <FaList style={iconStyle} /> Order History
-                      </NavLink>
-                    </li>
-                  </>
-                )}
+            <li className="nav-item mb-2">
+              <NavLink
+                to={`/branches/${branchId}/counter/${counterId}/orders`}
+                style={navStyle}
+              >
+                <FaList style={iconStyle} /> Order History
+              </NavLink>
+            </li>
+          </>
+        )}
 
       </ul>
     </div>

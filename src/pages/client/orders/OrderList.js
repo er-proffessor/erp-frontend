@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-// import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import API from "../../../config/api";
 import { FaDownload } from "react-icons/fa";
 import usePageTitle from "../../../hooks/usePageTitle";
@@ -8,24 +8,38 @@ function OrderList() {
 
   usePageTitle("Order List");
 
-  const counterId = localStorage.getItem("counterId");
+  const { counterId } = useParams(); 
+  // const counterId = localStorage.getItem("counterId");
+  // const branchId = localStorage.getItem("branchId");
+ const token = localStorage.getItem("token");
 
   const [orders, setOrders] = useState([]);
 
   const fetchOrders = useCallback(async () => {
     try {
-      const res = await API.get(`/api/orders/history/${counterId}`, {
+      let res;
+
+      if(counterId){
+      res = await API.get(`/api/orders/history/${counterId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+          Authorization: `Bearer ${token}`
         }
       });
+    }
+      else{
+         res = await API.get(`/api/orders/history/schoolsOrder`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      }
 
       setOrders(res.data);
 
     } catch (err) {
       console.error(err);
     }
-  }, [counterId]);
+  }, [counterId, token]);
 
   useEffect(() => {
     fetchOrders();
@@ -39,7 +53,7 @@ const updatePaymentStatus = async (orderId, status) => {
       { billingStatus: status },
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+          Authorization: `Bearer ${token}`
         }
       }
     );
@@ -56,7 +70,7 @@ const updatePaymentStatus = async (orderId, status) => {
         `/api/orders/invoice/${orderId}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
+            Authorization: `Bearer ${token}`
           },
           responseType: "blob"
         }
@@ -82,7 +96,7 @@ const updatePaymentStatus = async (orderId, status) => {
         <thead>
           <tr>
             <th>Books</th>
-            <th>Student</th>
+            <th>Student/School</th>
             <th>Class</th>
             <th>Total Qty</th>
             <th>Grand Total</th>
@@ -116,7 +130,7 @@ const updatePaymentStatus = async (orderId, status) => {
               return (
                 <tr key={order._id}>
   <td>{bookNames}</td>
-  <td>{order.studentName || "-"}</td>
+  <td>{order.studentName || order.schoolId?.schoolName || "-"}</td>
   <td>{order.className || "-"}</td>
 
   <td>

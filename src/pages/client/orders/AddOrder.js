@@ -1,19 +1,23 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+// import {  useState } from "react";
+// import { useNavigate } from "react-router-dom";
 import API from "../../../config/api";
 import usePageTitle from "../../../hooks/usePageTitle";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 
 function SellBooks() {
 
   usePageTitle("Add Order");
 
-  const counterId = localStorage.getItem("counterId");
+  // const counterId = localStorage.getItem("counterId");
    const branchId = localStorage.getItem("branchId");
    const token = localStorage.getItem("token");
 
-   const navigate = useNavigate();
+    const { counterId } = useParams();
 
+  //  const navigate = useNavigate();
+
+  
   const [selectedClass, setSelectedClass] = useState("");
   const [books, setBooks] = useState([]);
   const [form, setForm] = useState({
@@ -21,35 +25,93 @@ function SellBooks() {
     fatherName: "",
     mobileNo: "",
     className: "",
-    buyerType: "DIRECT",
+    // buyerType: "DIRECT",
+    buyerType: counterId ? "DIRECT" : "SCHOOL",
     billingStatus: "PAID",
     paymentType: "Cash",
     utrNo: "",
     books: []
   });
 
-    const { fetchCounters } = useOutletContext();
-
+    const { fetchCounters, schools } = useOutletContext();
+    
   // Fetch Available Books
-  const fetchAvailableBooks = useCallback(async () => {
-    try {
-      const res = await API.get(`/api/orders/counter-books/${counterId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+  // const fetchAvailableBooks = useCallback(async () => {
+  //   try {
+  //     const res = await API.get(`/api/orders/counter-books/${counterId}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`
+  //       }
+  //     });
 
-      setBooks(res.data || []);
-    } catch (err) {
-      console.error("Error fetching books", err);
+  //     setBooks(res.data || []);
+  //   } catch (err) {
+  //     console.error("Error fetching books", err);
+  //   }
+  //   }, [counterId, token]);
+
+
+//     const fetchAvailableBooks = useCallback(async () => {
+//   try {
+//     let res;
+
+//     if (counterId) {
+//       // ✅ Counter stock
+//       res = await API.get(`/api/orders/counter-books/${counterId}`, {
+//         headers: { Authorization: `Bearer ${token}` }
+//       });
+//     } else {
+//       // ✅ Branch main stock (for school order)
+//       res = await API.get(`/api/branches/${branchId}/books`, {
+//         headers: { Authorization: `Bearer ${token}` }
+//       });
+//     }
+
+//     setBooks(res.data || res.data.data || []);
+//   } catch (err) {
+//     console.error("Error fetching books", err);
+//   }
+// }, [counterId, branchId, token]);
+
+const fetchAvailableBooks = useCallback(async () => {
+  try {
+    let res;
+
+    if (counterId) {
+      res = await API.get(`/api/orders/counter-books/${counterId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } else {
+      res = await API.get(`/api/branches/${branchId}/books`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
     }
-    }, [counterId, token]);
+
+    console.log("FULL RESPONSE:", res.data);
+
+    const data = Array.isArray(res.data)
+      ? res.data
+      : res.data.data || res.data.books || [];
+
+    setBooks(data);
+
+  } catch (err) {
+    console.error("Error fetching books", err);
+    setBooks([]); // safety
+  }
+}, [counterId, branchId, token]);
 
       useEffect(() => {
         fetchAvailableBooks();
       }, [fetchAvailableBooks]);
 
+
+
       const classList = [...new Set(books.map(book => book.className))];
+
+      useEffect(() => {
+  console.log("Books Data:", books);
+}, [books]);
 
 
       // const filteredBooks = selectedClass
@@ -75,7 +137,9 @@ function SellBooks() {
     const classBooks = books
       .filter(book => book.className === cls)
       .map(book => ({
-        bookId: book.bookId,
+        // bookId: book.bookId,
+        // bookId: book._id,
+        bookId: book.bookId || book._id, 
         bookName: book.bookName,
         sellPrice: book.sellPrice || book.price || 0,
         quantity: 1,
@@ -83,12 +147,16 @@ function SellBooks() {
         selected: true
       }));
 
+      console.log("Mapped Books:", classBooks);
+
     setForm(prev => ({
       ...prev,
       className: cls,
       books: classBooks
     }));
   };
+
+  
 
   // Update book row
   const updateBookField = (index, field, value) => {
@@ -121,26 +189,57 @@ function SellBooks() {
       return;
     }
     try {
-      await API.post("/api/orders/create",
-       {
-          counterId,
-          studentName: form.studentName,
-          fatherName: form.fatherName,
-          mobileNo: form.mobileNo,
-          className: form.className,
-          buyerType: form.buyerType,
-          books: selectedBooks,
-          totalAmount,
-          billingStatus: form.billingStatus,
-          paymentType: form.paymentType,
-          utrNo: form.utrNo
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+      // await API.post("/api/orders/create",
+      //  {
+      //     counterId,
+      //     studentName: form.studentName,
+      //     fatherName: form.fatherName,
+      //     mobileNo: form.mobileNo,
+      //     className: form.className,
+      //     buyerType: form.buyerType,
+      //     books: selectedBooks,
+      //     totalAmount,
+      //     billingStatus: form.billingStatus,
+      //     paymentType: form.paymentType,
+      //     utrNo: form.utrNo
+      //   },
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`
+      //     }
+      //   }
+      // );
+      // console.log("Before API call");
+
+     
+
+      await API.post(
+  "/api/orders/create",
+  {
+    branchId,
+    counterId: counterId || null,
+
+    buyerType: counterId ? "DIRECT" : "SCHOOL",
+
+    schoolId: !counterId ? form.schoolId : null,
+
+    studentName: counterId ? form.studentName : null,
+    fatherName: counterId ? form.fatherName : null,
+    mobileNo: counterId ? form.mobileNo : null,
+
+    className: form.className,
+    books: selectedBooks,
+    totalAmount,
+
+    billingStatus: form.billingStatus,
+    paymentType: form.paymentType,
+    utrNo: form.paymentType !== "Cash" ? form.utrNo : null
+  },
+  {
+    headers: { Authorization: `Bearer ${token}` }
+  }
+);
+// console.log("After API call");
 
       alert("Order placed successfully ✅");
 
@@ -154,9 +253,13 @@ function SellBooks() {
 
       
       await fetchAvailableBooks(); // Refresh Counter stock
+      // console.log("Before fetchCounters");
+
       await fetchCounters(); 
 
-      navigate(`/branches/${branchId}/counter-dashboard`);
+      // console.log("After fetchCounters");
+
+      // navigate(`/branches/${branchId}/counter-dashboard`);
       // navigate(`/branches/${branchId}/counter/${counterId}`);
 
     } catch (err) {
@@ -170,6 +273,8 @@ function SellBooks() {
 
       <form onSubmit={handleSubmit} className="mb-4">
 
+          {counterId && (
+        <>
           {/* Student Info */}
           <div className="mb-2">
           <label>Student Name</label>
@@ -205,6 +310,29 @@ function SellBooks() {
             required
           />
         </div>
+      </>
+)}
+        {/* Schools */}
+
+        {!counterId && (
+  <div className="mb-3">
+    <label>Select School</label>
+    <select
+      name="schoolId"
+      value={form.schoolId || ""}
+      onChange={handleChange}
+      className="form-control"
+      required
+    >
+      <option value="">Select School</option>
+      {schools?.map((s) => (
+        <option key={s._id} value={s._id}>
+          {s.schoolName}
+        </option>
+      ))}
+    </select>
+  </div>
+)}
 
           {/* Class Select */}
           <div className="mb-3">
@@ -316,7 +444,7 @@ function SellBooks() {
             className="form-control"
           />
         </div> */}
-
+          {!counterId && (
           <div className="mt-3">
           <label>Buyer Type</label>
           <select
@@ -325,10 +453,11 @@ function SellBooks() {
             onChange={handleChange}
             className="form-control"
           >
-            <option value="DIRECT">Direct</option>
+            {/* <option value="DIRECT">Direct</option> */}
             <option value="SCHOOL">School</option>
           </select>
         </div>
+        )}
        
         {/* Billing Status */}
           <div className="mt-3">
@@ -384,5 +513,260 @@ function SellBooks() {
     </div>
   );
 }
+
+// import { useState } from "react";
+// import { useParams, useOutletContext } from "react-router-dom";
+// import API from "../config/api";
+
+// function SellBooks() {
+
+//   usePageTitle("Add Order");
+
+//   const { branchId, counterId } = useParams();
+
+//   const { schools, books } = useOutletContext(); // ✅ from DashboardLayout
+
+//   const [form, setForm] = useState({
+//     // buyerType: "DIRECT",
+//     buyerType: counterId ? "DIRECT" : "SCHOOL",
+//     schoolId: "",
+//     studentName: "",
+//     fatherName: "",
+//     mobileNo: "",
+//     className: "",
+//     books: [],
+//     paymentType: "CASH",
+//     billingStatus: "PAID",
+//     utrNo: ""
+//   });
+
+//   const handleChange = (e) => {
+//     setForm({ ...form, [e.target.name]: e.target.value });
+//   };
+
+//   // Add book row
+//   const addBookRow = () => {
+//     setForm({
+//       ...form,
+//       books: [...form.books, { bookId: "", quantity: 1 }]
+//     });
+//   };
+
+//   // Handle book change
+//   const handleBookChange = (index, field, value) => {
+//     const updatedBooks = [...form.books];
+//     updatedBooks[index][field] = value;
+//     setForm({ ...form, books: updatedBooks });
+//   };
+
+//   // Submit Order
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     try {
+//       const token = localStorage.getItem("token");
+
+//       // const payload = {
+//       //   ...form,
+//       //   branchId,
+//       //   counterId: form.buyerType === "DIRECT" ? localStorage.getItem("counterId") : null
+//       // };
+
+//       const payload = {
+//   branchId,
+//   buyerType: form.buyerType,
+
+//   // 👇 Conditional fields
+//   // counterId: form.buyerType === "DIRECT" ? localStorage.getItem("counterId") : null,
+//    counterId: counterId || null,
+//   schoolId: form.buyerType === "SCHOOL" ? form.schoolId : null,
+
+//   studentName: form.buyerType === "DIRECT" ? form.studentName : null,
+//   fatherName: form.buyerType === "DIRECT" ? form.fatherName : null,
+//   mobileNo: form.buyerType === "DIRECT" ? form.mobileNo : null,
+//   className: form.buyerType === "DIRECT" ? form.className : null,
+
+//   books: form.books,
+//   paymentType: form.paymentType,
+//   billingStatus: form.billingStatus,
+//   utrNo: form.paymentType === "ONLINE" ? form.utrNo : null
+// };
+
+//       await API.post("/api/orders/create", payload, {
+//         headers: {
+//           Authorization: `Bearer ${token}`
+//         }
+//       });
+
+//       alert("Order Created Successfully ✅");
+
+//       // Reset form
+//       setForm({
+//         buyerType: "DIRECT",
+//         schoolId: "",
+//         studentName: "",
+//         fatherName: "",
+//         mobileNo: "",
+//         className: "",
+//         books: [],
+//         paymentType: "CASH",
+//         billingStatus: "PAID",
+//         utrNo: ""
+//       });
+
+//     } catch (error) {
+//       console.error(error);
+//       alert(error.response?.data?.message || "Order failed");
+//     }
+//   };
+
+//   return (
+//     <div className="card p-4">
+//       <h4>Create Order</h4>
+
+//       <form onSubmit={handleSubmit}>
+
+//         {/* Buyer Type */}
+//         <div className="mb-3">
+//           <label>Buyer Type</label>
+//           <select
+//             name="buyerType"
+//             value={form.buyerType}
+//             onChange={handleChange}
+//             className="form-control"
+//              disabled={!!counterId} 
+//           >
+//             <option value="DIRECT">Student (Counter)</option>
+//             <option value="SCHOOL">School (Bulk)</option>
+//           </select>
+//         </div>
+
+//         {/* School Dropdown */}
+//         {form.buyerType === "SCHOOL" && (
+//           <div className="mb-3">
+//             <label>Select School</label>
+//             <select
+//               name="schoolId"
+//               value={form.schoolId}
+//               onChange={handleChange}
+//               className="form-control"
+//               required
+//             >
+//               <option value="">Select School</option>
+//               {schools.map((s) => (
+//                 <option key={s._id} value={s._id}>
+//                   {s.schoolName}
+//                 </option>
+//               ))}
+//             </select>
+//           </div>
+//         )}
+
+//         {/* Student Fields */}
+//         {form.buyerType === "DIRECT" && (
+//           <>
+//             <input
+//               type="text"
+//               name="studentName"
+//               placeholder="Student Name"
+//               className="form-control mb-2"
+//               value={form.studentName}
+//               onChange={handleChange}
+//               required
+//             />
+//             <input
+//               type="text"
+//               name="fatherName"
+//               placeholder="Father Name"
+//               className="form-control mb-2"
+//               value={form.fatherName}
+//               onChange={handleChange}
+//             />
+//             <input
+//               type="text"
+//               name="mobileNo"
+//               placeholder="Mobile No"
+//               className="form-control mb-2"
+//               value={form.mobileNo}
+//               onChange={handleChange}
+//             />
+//             <input
+//               type="text"
+//               name="className"
+//               placeholder="Class"
+//               className="form-control mb-2"
+//               value={form.className}
+//               onChange={handleChange}
+//             />
+//           </>
+//         )}
+
+//         {/* Books Section */}
+//         <div className="mb-3">
+//           <button type="button" onClick={addBookRow} className="btn btn-primary">
+//             Add Book
+//           </button>
+
+//           {form.books.map((item, index) => (
+//             <div key={index} className="d-flex gap-2 mt-2">
+//               <select
+//                 value={item.bookId}
+//                 onChange={(e) =>
+//                   handleBookChange(index, "bookId", e.target.value)
+//                 }
+//                 className="form-control"
+//                 required
+//               >
+//                 <option value="">Select Book</option>
+//                 {books.map((b) => (
+//                   <option key={b._id} value={b._id}>
+//                     {b.bookName}
+//                   </option>
+//                 ))}
+//               </select>
+
+//               <input
+//                 type="number"
+//                 value={item.quantity}
+//                 min="1"
+//                 onChange={(e) =>
+//                   handleBookChange(index, "quantity", e.target.value)
+//                 }
+//                 className="form-control"
+//               />
+//             </div>
+//           ))}
+//         </div>
+
+//         {/* Payment */}
+//         <select
+//           name="paymentType"
+//           value={form.paymentType}
+//           onChange={handleChange}
+//           className="form-control mb-2"
+//         >
+//           <option value="CASH">Cash</option>
+//           <option value="ONLINE">Online</option>
+//         </select>
+
+//         {form.paymentType === "ONLINE" && (
+//           <input
+//             type="text"
+//             name="utrNo"
+//             placeholder="UTR No"
+//             className="form-control mb-2"
+//             value={form.utrNo}
+//             onChange={handleChange}
+//           />
+//         )}
+
+//         <button type="submit" className="btn btn-success mt-3">
+//           Create Order
+//         </button>
+//       </form>
+//     </div>
+//   );
+// }
+
 
 export default SellBooks;

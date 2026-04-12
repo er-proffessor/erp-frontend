@@ -4,6 +4,8 @@ import API from "../../config/api";
 import { FaSchool, FaBook, FaUserTie, FaTasks } from "react-icons/fa";
 import usePageTitle from "../../hooks/usePageTitle";
 
+
+
 const dashboardCardStyle = {
   padding: "20px",
   borderRadius: "16px",
@@ -50,11 +52,45 @@ function Dashboard() {
     }
   }, [branchId]);
 
+
+const [stats, setStats] = useState({
+  totalSchools: 0,
+  totalBooks: 0,
+  totalCounters: 0,
+  pendingTasks: 0,
+});
+
+
+const fetchDashboardStats = useCallback( async () => {
+  try{
+    const token = localStorage.getItem("token");
+
+    const response = await API.get(
+      `/api/dashboard/${branchId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setStats(response.data.data);
+
+  }
+  catch(err){
+    console.error("Dashboard Stats Error", err);
+  }
+}, [branchId]);
+
+
+
+
   useEffect(() => {
     if (branchId) {
       fetchBranchDetails();
+      fetchDashboardStats();
     }
-  }, [branchId, fetchBranchDetails]);
+  }, [branchId, fetchBranchDetails, fetchDashboardStats]);
 
   return (
     
@@ -79,7 +115,7 @@ function Dashboard() {
             <div className="d-flex align-items-center justify-content-between">
   <div>
     <h6 className="text-muted">Total Schools</h6>
-    <h3 className="fw-bold text-success">10</h3>
+    <h3 className="fw-bold text-success">{stats.totalSchools}</h3>
   </div>
   <FaSchool size={28} color="#4CAF50" />
 </div>
@@ -95,7 +131,7 @@ function Dashboard() {
             <div className="d-flex align-items-center justify-content-between">
   <div>
     <h6 className="text-muted">Total Books / Inventory</h6>
-    <h3 className="fw-bold text-primary">110</h3>
+    <h3 className="fw-bold text-primary">{stats.totalBooks}</h3>
   </div>
   <FaBook size={28} color="#2196F3" />
 </div>
@@ -111,7 +147,7 @@ function Dashboard() {
             <div className="d-flex align-items-center justify-content-between">
   <div>
     <h6 className="text-muted">Total Counter</h6>
-    <h3 className="fw-bold" style={{ color: "#9C27B0" }}>10</h3>
+    <h3 className="fw-bold" style={{ color: "#9C27B0" }}>{stats.totalCounters}</h3>
   </div>
   <FaUserTie size={28} color="#9C27B0" />
 </div>
@@ -127,7 +163,7 @@ function Dashboard() {
             <div className="d-flex align-items-center justify-content-between">
   <div>
     <h6 className="text-muted">Pending Tasks</h6>
-    <h3 className="fw-bold" style={{ color: "#FF9800" }}>5</h3>
+    <h3 className="fw-bold" style={{ color: "#FF9800" }}>{stats.pendingTasks}</h3>
   </div>
   <FaTasks size={28} color="#FF9800" />
 </div>

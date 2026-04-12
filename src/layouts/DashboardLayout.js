@@ -25,35 +25,62 @@ function DashboardLayout() {
 
   // =========Get School List====================
 
-  useEffect(() => {
-    if (!branchId || role === "COUNTER") return;
+  // useEffect(() => {
+  //   if (!branchId || role === "COUNTER") return;
 
-    const fetchSchools = async () => {
-      try {
-        setSchoolsLoading(true);
+  //   const fetchSchools = async () => {
+  //     try {
+  //       setSchoolsLoading(true);
 
-        const token = localStorage.getItem("token");
+  //       const token = localStorage.getItem("token");
 
-        const resp = await API.get(`/api/branches/${branchId}/schools`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+  //       const resp = await API.get(`/api/branches/${branchId}/schools`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
 
-        setSchools(resp.data.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setSchoolsLoading(false);
+  //       setSchools(resp.data.data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setSchoolsLoading(false);
+  //     }
+  //   };
+
+  //   fetchSchools();
+  // }, [branchId, role]);
+
+const fetchSchools = useCallback(async () => {
+  if (!branchId || role === "COUNTER") return;
+
+  try {
+    setSchoolsLoading(true);
+
+    const token = localStorage.getItem("token");
+
+    const resp = await API.get(
+      `/api/branches/${branchId}/schools`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    };
+    );
 
-    fetchSchools();
-  }, [branchId, role]);
+    setSchools(resp.data.data);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setSchoolsLoading(false);
+  }
+}, [branchId, role]);
 
-
+useEffect(() => {
+  fetchSchools();
+}, [fetchSchools, branchId, role]);
 
   // =========Get Books List===============
 
@@ -404,7 +431,7 @@ function DashboardLayout() {
             )
               :
               (<Outlet context={{
-                schools, addSchool, updateSchool, deleteSchool,
+                schools, addSchool, updateSchool, deleteSchool, fetchSchools,
                 books, addBooks, updateBook, fetchBooks, deleteBook,
                 counters, fetchCounters, addCounter, updateCounter, deleteCounter
               }} />

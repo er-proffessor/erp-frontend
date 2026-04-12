@@ -34,21 +34,32 @@ function App() {
         <Route path="/branches/:branchId" 
         element={<ProtectedRoute allowedRoles={["CLIENT", "SUPER_ADMIN", "COUNTER"]}><DashboardLayout /></ProtectedRoute>} >
           <Route index element={<Dashboard />} />
+          {/* Schools */}
           <Route path="schools" element={<SchoolsList />} />
           <Route path="schools/add" element={<AddSchool />}/>
           <Route path="schools/edit/:id" element={<AddSchool />} />
+          {/* Books */}
           <Route path="books" element={<BooksList />}/>
           <Route path="books/add" element={<AddBook />}/>
           <Route path="books/edit/:id" element={<AddBook />} />
+          {/* Counters */}
           <Route path="counters" element={<CountersList />}/>
           <Route path="counters/add" element={<AddCounter />}/>
           <Route path="counters/edit/:id" element={<AddCounter />} />
+          {/* Inventory Path */}
           <Route path="inventory" element={<Inventory />}/>
+          {/* Counter Stock */}
           <Route path="counter-stock/:counterId" element={<CounterStock />}/>
+          <Route path="/branches/:branchId/counter-stock/assign" element={<AssignStock />}/>
+          {/* Counter Orders */}
           <Route path="counter/:counterId/sell" element={<AddOrder />} />
           <Route path="counter/:counterId/orders" element={<OrderList />} />
+           {/* CLIENT ORDERS */}
+          <Route path="orders" element={<OrderList />} />
+          <Route path="orders/create" element={<AddOrder />} />
+          {/* Counter Dashboard */}
           <Route path="counter-dashboard" element={<CounterDashboard />} />
-          <Route path="/branches/:branchId/counter-stock/assign" element={<AssignStock />}/>
+          
         </Route>
 
       </Routes>
